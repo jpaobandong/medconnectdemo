@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Spinner, Row } from "react-bootstrap";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Switch } from "react-router-dom";
 import SwitchNavBar from "./components/navbar/SwitchNavbar";
 import Home from "./components/pages/Home";
 import Appointments from "./components/pages/patient_pages/Appointments";
@@ -13,6 +13,10 @@ import GuestRoute from "./components/hocs/GuestRoute";
 import AdminRoute from "./components/hocs/AdminRoute";
 import PatientAccounts from "./components/pages/admin_pages/PatientAccounts";
 import OfficeAccounts from "./components/pages/admin_pages/OfficeAccounts";
+import OfficeRoute from "./components/hocs/OfficeRoute";
+import OfficeAppointments from "./components/pages/office_pages/OfficeAppointments";
+import OfficePatientsList from "./components/pages/office_pages/OfficePatientsList";
+import OfficeRecords from "./components/pages/office_pages/OfficeRecords";
 
 function App() {
   const [userData, setUserData] = useState({
@@ -63,13 +67,34 @@ function App() {
         <BrowserRouter>
           <UserContext.Provider value={{ userData, setUserData }}>
             <SwitchNavBar />
-            <GuestRoute exact path="/" component={Home} />
-            <GuestRoute path="/verification" component={Verification} />
-            <PatientRoute path="/appointments" component={Appointments} />
-            <PatientRoute path="/doctorslist" component={DoctorsList} />
-            <PatientRoute path="/records" component={Records} />
-            <AdminRoute path="/accounts" component={PatientAccounts} />
-            <AdminRoute path="/offices" component={OfficeAccounts} />
+            <Switch>
+              <GuestRoute exact path="/" component={Home} />
+              <GuestRoute path="/verification" component={Verification} />
+              <PatientRoute
+                path="/patient/appointments"
+                component={Appointments}
+              />
+              <PatientRoute
+                path="/patient/doctorslist"
+                component={DoctorsList}
+              />
+              <PatientRoute path="/patient/records" component={Records} />
+              <PatientRoute path="/patient/" component={Appointments} />
+              {/* TODO: Optimize this redirect */}
+              <AdminRoute path="/admin/accounts" component={PatientAccounts} />
+              <AdminRoute path="/admin/offices" component={OfficeAccounts} />
+              <AdminRoute path="/admin/" component={PatientAccounts} />
+              <OfficeRoute
+                path="/office/appointments"
+                component={OfficeAppointments}
+              />
+              <OfficeRoute path="/office/records" component={OfficeRecords} />
+              <OfficeRoute
+                path="/office/patients"
+                component={OfficePatientsList}
+              />
+              <OfficeRoute path="/office/" component={OfficeAppointments} />
+            </Switch>
           </UserContext.Provider>
         </BrowserRouter>
       </div>

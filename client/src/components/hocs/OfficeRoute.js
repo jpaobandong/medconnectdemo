@@ -3,7 +3,7 @@ import { Redirect, Route } from "react-router-dom";
 import UserContext from "../../context/UserContext";
 import Unauthorized from "../pages/Unauthorized";
 
-const PatientRoute = ({ component: Component, ...rest }) => {
+const OfficeRoute = ({ component: Component, ...rest }) => {
   const { userData } = useContext(UserContext);
   const defaultRoutes = {
     patient: "/patient/appointments",
@@ -25,7 +25,7 @@ const PatientRoute = ({ component: Component, ...rest }) => {
           );
 
         switch (userData.user.role) {
-          case "patient":
+          case "office":
             return <Component {...props} />;
           case "admin":
             return (
@@ -36,11 +36,11 @@ const PatientRoute = ({ component: Component, ...rest }) => {
                 }}
               />
             );
-          case "office":
+          case "patient":
             return (
               <Redirect
                 to={{
-                  pathname: defaultRoutes.office,
+                  pathname: defaultRoutes.patient,
                   state: { from: props.location },
                 }}
               />
@@ -53,4 +53,4 @@ const PatientRoute = ({ component: Component, ...rest }) => {
   );
 };
 
-export default PatientRoute;
+export default OfficeRoute;

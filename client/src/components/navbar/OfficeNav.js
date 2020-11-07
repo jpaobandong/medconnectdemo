@@ -1,6 +1,6 @@
 import React from "react";
 import { Navbar, Nav } from "react-bootstrap";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import LogoutButton from "./LogoutBtn";
 
 const OfficeNav = () => {
@@ -13,20 +13,20 @@ const OfficeNav = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav
-            defaultActiveKey="appointmentstoday"
+            defaultActiveKey="/office/appointments"
             className="mr-auto"
             onSelect={(selectedKey) => {
-              hist.push("/" + selectedKey);
+              hist.push("/office/" + selectedKey);
             }}
           >
             <Nav.Item>
-              <Nav.Link eventKey="appointmentstoday">Appointments</Nav.Link>
+              <Nav.Link eventKey="appointments">Appointments</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link eventKey="recordslist">Records</Nav.Link>
+              <Nav.Link eventKey="records">Records</Nav.Link>
             </Nav.Item>
             <Nav.Item>
-              <Nav.Link eventKey="patientlist">Patients</Nav.Link>
+              <Nav.Link eventKey="patients">Patients</Nav.Link>
             </Nav.Item>
           </Nav>
           <Nav className="end">

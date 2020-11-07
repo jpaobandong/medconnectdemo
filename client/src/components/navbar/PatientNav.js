@@ -1,6 +1,6 @@
 import React from "react";
 import { Navbar, Nav } from "react-bootstrap";
-import { useHistory, useRouteMatch } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import LogoutButton from "./LogoutBtn";
 
 const PatientNav = () => {
@@ -9,14 +9,14 @@ const PatientNav = () => {
   return (
     <>
       <Navbar bg="primary" expand="lg" variant="dark">
-        <Navbar.Brand href="/">MedConnect</Navbar.Brand>
+        <Navbar.Brand href="/patient/appointments">MedConnect</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav
             defaultActiveKey="appointments"
             className="mr-auto"
             onSelect={(selectedKey) => {
-              hist.push("/" + selectedKey);
+              hist.push("/patient/" + selectedKey);
             }}
           >
             <Nav.Item>

@@ -9,14 +9,14 @@ const AdminNav = () => {
   return (
     <>
       <Navbar bg="primary" expand="lg" variant="dark">
-        <Navbar.Brand href="/accounts">MedConnect</Navbar.Brand>
+        <Navbar.Brand>MedConnect</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav
-            defaultActiveKey="accounts"
+            defaultActiveKey="/admin/accounts"
             className="mr-auto"
             onSelect={(selectedKey) => {
-              hist.push("/" + selectedKey);
+              hist.push("/admin/" + selectedKey);
             }}
           >
             <Nav.Item>

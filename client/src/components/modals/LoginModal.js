@@ -74,15 +74,15 @@ const LoginModal = (props) => {
               switch (data.user.role) {
                 case "patient":
                   props.toggle();
-                  props.history.push("/appointments");
+                  props.history.push("/patient/appointments");
                   break;
                 case "admin":
                   props.toggle();
-                  props.history.push("/accounts");
+                  props.history.push("/admin/accounts");
                   break;
                 case "office":
                   props.toggle();
-                  props.history.push("/appointmentstoday");
+                  props.history.push("/office/appointments");
                   break;
                 default:
                   props.toggle();

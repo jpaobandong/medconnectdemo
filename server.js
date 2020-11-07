@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const auth_routes = require("./routes/auth");
 const patient_routes = require("./routes/patient_routes");
 const admin_routes = require("./routes/admin_routes");
+const office_routes = require("./routes/office_routes");
 require("dotenv").config();
 
 //#initialize express framework-------express handles most of the process we'll be running
@@ -41,3 +42,4 @@ if (process.env.NODE_ENV === "production") {
 app.use("/auth", auth_routes);
 app.use("/patient", patient_routes);
 app.use("/admin", admin_routes);
+app.use("/office", office_routes);

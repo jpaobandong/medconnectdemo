@@ -5,7 +5,11 @@ import Unauthorized from "../pages/Unauthorized";
 
 const AdminRoute = ({ component: Component, ...rest }) => {
   const { userData } = useContext(UserContext);
-
+  const defaultRoutes = {
+    patient: "/patient/appointments",
+    office: "/office/appointments",
+    admin: "/accounts",
+  };
   return (
     <Route
       {...rest}
@@ -20,9 +24,30 @@ const AdminRoute = ({ component: Component, ...rest }) => {
             />
           );
 
-        if (userData.user.role === "admin") return <Component {...props} />;
-
-        return <Unauthorized />;
+        switch (userData.user.role) {
+          case "admin":
+            return <Component {...props} />;
+          case "patient":
+            return (
+              <Redirect
+                to={{
+                  pathname: defaultRoutes.patient,
+                  state: { from: props.location },
+                }}
+              />
+            );
+          case "office":
+            return (
+              <Redirect
+                to={{
+                  pathname: defaultRoutes.office,
+                  state: { from: props.location },
+                }}
+              />
+            );
+          default:
+            return <Unauthorized />;
+        }
       }}
     />
   );
