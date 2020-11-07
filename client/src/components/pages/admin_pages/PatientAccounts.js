@@ -55,7 +55,7 @@ const PatientAccounts = () => {
     <>
       <Container className="p-5">
         <Row className="justify-content-between">
-          <h3>List of Appointments:</h3>
+          <h3>Patient Accounts:</h3>
         </Row>
         {isLoaded ? (
           <Table striped bordered hover>

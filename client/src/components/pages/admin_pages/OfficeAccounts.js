@@ -70,7 +70,7 @@ const OfficeAccounts = () => {
     <>
       <Container className="p-5">
         <Row className="justify-content-between">
-          <h3>List of Appointments:</h3>
+          <h3>Office Accounts:</h3>
           <Button variant="link" onClick={toggleMod}>
             Add an Office Account
           </Button>
