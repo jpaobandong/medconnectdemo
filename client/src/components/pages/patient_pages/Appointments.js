@@ -294,6 +294,15 @@ const Appointments = () => {
     };
     let token = localStorage.getItem("auth-token");
     const dateObj = new Date(date.month + " " + date.day + " " + date.year);
+    if (selectedDoctor === "") {
+      setAlertContent({
+        show: true,
+        content: "Please Select Doctor",
+        variant: "danger",
+      });
+      setDisableBtn(false);
+      return false;
+    }
     if (dateObj <= currentDate) {
       setAlertContent({
         show: true,

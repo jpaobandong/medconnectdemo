@@ -23,6 +23,14 @@ const PatientSchema = new mongoose.Schema({
     type: Date,
     required: true,
   },
+  contactNo: {
+    type: String,
+    required: true,
+  },
+  sex: {
+    type: String,
+    required: true,
+  },
   address: {
     street: {
       type: String,

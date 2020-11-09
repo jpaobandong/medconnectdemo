@@ -23,6 +23,13 @@ router.post(
     const { office_id, req_date, req_timeslot } = req.body;
     const user = req.user;
 
+    if (!office_id) {
+      return res.status(500).json({
+        msg: { body: "Please select a doctor" },
+        msgError: true,
+      });
+    }
+
     const sched = await Schedule.findOne(
       {
         date: req_date,

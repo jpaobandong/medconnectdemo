@@ -38,6 +38,8 @@ router.post("/register", async (req, res) => {
     street,
     city,
     province,
+    contactNo,
+    sex,
   } = req.body.fields;
   const birthdate = req.body.birthdate;
   const vCode = generateVCode();
@@ -49,7 +51,9 @@ router.post("/register", async (req, res) => {
       !street ||
       !city ||
       !province ||
-      !birthdate
+      !birthdate ||
+      !contactNo ||
+      !sex
     ) {
       return res
         .status(400)
@@ -110,6 +114,8 @@ router.post("/register", async (req, res) => {
       firstName,
       lastName,
       birthdate,
+      contactNo,
+      sex,
       address: {
         street,
         city,

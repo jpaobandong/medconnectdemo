@@ -34,7 +34,11 @@ const GuestNav = () => {
         toggle={toggleLogin}
         history={hist}
       ></LoginModal>
-      <RegisterModal show={showReg} toggle={toggleReg}></RegisterModal>
+      <RegisterModal
+        show={showReg}
+        toggle={toggleReg}
+        history={hist}
+      ></RegisterModal>
     </>
   );
 };

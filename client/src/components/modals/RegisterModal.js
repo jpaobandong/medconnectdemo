@@ -12,6 +12,8 @@ const RegisterModal = (props) => {
     province: "",
     password: "",
     confirm: "",
+    contactNo: "",
+    sex: "female",
   });
   const [birthdate, setBirthdate] = useState(null);
 
@@ -20,6 +22,28 @@ const RegisterModal = (props) => {
     show: false,
     variant: "danger",
   });
+
+  const [buttonContent, setButtonContent] = useState(<>Submit</>);
+  const [buttonDisabled, setButtonDisabled] = useState(false);
+
+  const toggleBtn = () => {
+    if (buttonDisabled) {
+      setButtonDisabled(!buttonDisabled);
+      setButtonContent("Submit");
+    } else {
+      setButtonDisabled(!buttonDisabled);
+      setButtonContent(
+        <>
+          <span
+            className="spinner-border spinner-border-sm"
+            role="status"
+            aria-hidden="true"
+          ></span>
+          Sending...
+        </>
+      );
+    }
+  };
 
   //change the value of fields hook on change of field inpu
   const onChange = (e) => {
@@ -46,6 +70,8 @@ const RegisterModal = (props) => {
               show: true,
               variant: "danger",
             });
+            setButtonDisabled(false);
+            setButtonContent("Submit");
           } else {
             setAlertContent({
               content: data.msg.body,
@@ -54,6 +80,13 @@ const RegisterModal = (props) => {
             });
 
             /*TODO: REDIRECT TO VERIFY EMAIL PAGE*/
+            setTimeout(() => {
+              props.history.push("/verification");
+              props.toggle();
+              setButtonDisabled(false);
+              setButtonContent("Submit");
+              onClickClose();
+            }, 3000);
           }
         });
     } catch (err) {
@@ -86,6 +119,8 @@ const RegisterModal = (props) => {
       fields.city === "" ||
       fields.province === "" ||
       fields.confirm === "" ||
+      fields.sex === "" ||
+      fields.contactNo === "" ||
       birthdate === null
     ) {
       if (birthdate === null) {
@@ -94,6 +129,7 @@ const RegisterModal = (props) => {
           content: "Please select birthdate!",
           variant: "danger",
         });
+
         return false;
       }
       if (fields.password !== fields.confirm) {
@@ -102,6 +138,7 @@ const RegisterModal = (props) => {
           content: "Passwords do not match!",
           variant: "danger",
         });
+
         return false;
       } else {
         setAlertContent({
@@ -109,9 +146,11 @@ const RegisterModal = (props) => {
           content: "All fields required!",
           variant: "danger",
         });
+
         return false;
       }
     } else {
+      toggleBtn();
       sendToServer();
     }
   };
@@ -174,9 +213,33 @@ const RegisterModal = (props) => {
               <Form.Group>
                 <Form.Label className="mr-3">Birthdate</Form.Label>
                 <DatePicker
+                  className="pt-1"
                   onChange={setBirthdate}
                   value={birthdate}
                   maxDate={new Date()}
+                />
+              </Form.Group>
+            </Col>
+            <Col>
+              <Form.Label className="mr-3">Sex</Form.Label>
+              <Form.Control
+                as="select"
+                value={fields.sex}
+                onChange={onChange}
+                name="sex"
+              >
+                <option value="female">Female</option>
+                <option value="male">Male</option>
+              </Form.Control>
+            </Col>
+            <Col>
+              <Form.Group>
+                <Form.Label>Contact No.</Form.Label>
+                <Form.Control
+                  type="text"
+                  onChange={onChange}
+                  value={fields.contactNo}
+                  name="contactNo"
                 />
               </Form.Group>
             </Col>
@@ -269,11 +332,19 @@ const RegisterModal = (props) => {
         </Alert>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onClickClose}>
+        <Button
+          disabled={buttonDisabled}
+          variant="secondary"
+          onClick={onClickClose}
+        >
           Close
         </Button>
-        <Button variant="primary" onClick={onClickSubmit}>
-          Submit
+        <Button
+          disabled={buttonDisabled}
+          variant="primary"
+          onClick={onClickSubmit}
+        >
+          {buttonContent}
         </Button>
       </Modal.Footer>
     </Modal>
