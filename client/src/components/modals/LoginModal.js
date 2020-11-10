@@ -40,7 +40,7 @@ const LoginModal = (props) => {
         });
         return false;
       } else {
-        await fetch("/auth/login", {
+        await fetch("/api/auth/login", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

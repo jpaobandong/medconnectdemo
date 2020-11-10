@@ -12,7 +12,7 @@ const OfficeAccounts = () => {
     setList([]);
     let token = localStorage.getItem("auth-token");
     try {
-      fetch("/admin/getOffices", {
+      fetch("/api/admin/getOffices", {
         method: "GET",
         headers: {
           "x-auth-token": token,

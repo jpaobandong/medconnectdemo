@@ -10,7 +10,7 @@ const PatientAccounts = () => {
     setList([]);
     let token = localStorage.getItem("auth-token");
     try {
-      fetch("/admin/getPatients", {
+      fetch("/api/admin/getPatients", {
         method: "GET",
         headers: {
           "x-auth-token": token,

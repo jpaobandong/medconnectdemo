@@ -37,7 +37,7 @@ const Verification = () => {
         });
         return false;
       } else {
-        await fetch("/auth/verifyAccount", {
+        await fetch("/api/auth/verifyAccount", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

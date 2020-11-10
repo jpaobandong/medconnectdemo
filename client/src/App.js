@@ -35,7 +35,7 @@ function App() {
     }
 
     try {
-      await fetch("/auth/authenticateUser", {
+      await fetch("/api/auth/authenticateUser", {
         method: "POST",
         headers: {
           "x-auth-token": token,
@@ -67,34 +67,30 @@ function App() {
         <BrowserRouter>
           <UserContext.Provider value={{ userData, setUserData }}>
             <SwitchNavBar />
-            <Switch>
-              <GuestRoute exact path="/" component={Home} />
-              <GuestRoute path="/verification" component={Verification} />
-              <PatientRoute
-                path="/patient/appointments"
-                component={Appointments}
-              />
-              <PatientRoute
-                path="/patient/doctorslist"
-                component={DoctorsList}
-              />
-              <PatientRoute path="/patient/records" component={Records} />
-              <PatientRoute path="/patient/" component={Appointments} />
-              {/* TODO: Optimize this redirect */}
-              <AdminRoute path="/admin/accounts" component={PatientAccounts} />
-              <AdminRoute path="/admin/offices" component={OfficeAccounts} />
-              <AdminRoute path="/admin/" component={PatientAccounts} />
-              <OfficeRoute
-                path="/office/appointments"
-                component={OfficeAppointments}
-              />
-              <OfficeRoute path="/office/records" component={OfficeRecords} />
-              <OfficeRoute
-                path="/office/patients"
-                component={OfficePatientsList}
-              />
-              <OfficeRoute path="/office/" component={OfficeAppointments} />
-            </Switch>
+
+            <GuestRoute exact path="/" component={Home} />
+            <GuestRoute path="/verification" component={Verification} />
+            <PatientRoute
+              path="/patient/appointments"
+              component={Appointments}
+            />
+            <PatientRoute path="/patient/doctorslist" component={DoctorsList} />
+            <PatientRoute path="/patient/records" component={Records} />
+            <PatientRoute exact path="/patient/" component={Appointments} />
+            {/* TODO: Optimize this redirect */}
+            <AdminRoute path="/admin/accounts" component={PatientAccounts} />
+            <AdminRoute path="/admin/offices" component={OfficeAccounts} />
+            <AdminRoute exact path="/admin/" component={PatientAccounts} />
+            <OfficeRoute
+              path="/office/appointments"
+              component={OfficeAppointments}
+            />
+            <OfficeRoute path="/office/records" component={OfficeRecords} />
+            <OfficeRoute
+              path="/office/patients"
+              component={OfficePatientsList}
+            />
+            <OfficeRoute exact path="/office/" component={OfficeAppointments} />
           </UserContext.Provider>
         </BrowserRouter>
       </div>

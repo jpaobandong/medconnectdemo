@@ -48,7 +48,7 @@ const NewOfficeModal = (props) => {
       });
     } else {
       try {
-        fetch("/admin/registerOffice", {
+        fetch("/api/admin/registerOffice", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",

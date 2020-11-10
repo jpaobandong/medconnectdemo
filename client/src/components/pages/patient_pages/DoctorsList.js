@@ -9,7 +9,7 @@ const DoctorsList = () => {
   const getDoctorsList = () => {
     let token = localStorage.getItem("auth-token");
     try {
-      fetch("/patient/getDoctors", {
+      fetch("/api/patient/getDoctors", {
         method: "GET",
         headers: {
           "x-auth-token": token,

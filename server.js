@@ -1,6 +1,7 @@
 //imports
 const express = require("express");
 const mongoose = require("mongoose");
+const api = require("./routes/api");
 const auth_routes = require("./routes/auth");
 const patient_routes = require("./routes/patient_routes");
 const admin_routes = require("./routes/admin_routes");
@@ -39,7 +40,8 @@ if (process.env.NODE_ENV === "production") {
   app.use(express.static("client/build"));
 }
 
-app.use("/auth", auth_routes);
+/* app.use("/auth", auth_routes);
 app.use("/patient", patient_routes);
 app.use("/admin", admin_routes);
-app.use("/office", office_routes);
+app.use("/office", office_routes); */
+app.use("/api", api);

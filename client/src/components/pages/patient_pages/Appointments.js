@@ -53,7 +53,7 @@ const Appointments = () => {
   const getDoctorsList = () => {
     let token = localStorage.getItem("auth-token");
     try {
-      fetch("/patient/getDoctors", {
+      fetch("/api/patient/getDoctors", {
         method: "GET",
         headers: {
           "x-auth-token": token,
@@ -88,7 +88,7 @@ const Appointments = () => {
     setAllSchedList([]);
     let token = localStorage.getItem("auth-token");
     try {
-      fetch("/patient/getSchedules", {
+      fetch("/api/patient/getSchedules", {
         method: "GET",
         headers: {
           "x-auth-token": token,
@@ -312,7 +312,7 @@ const Appointments = () => {
       setDisableBtn(false);
       return false;
     } else {
-      fetch("/patient/setAppointment", {
+      fetch("/api/patient/setAppointment", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

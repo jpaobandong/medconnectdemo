@@ -32,7 +32,7 @@ const OfficeAppointments = () => {
   const getPatientsList = () => {
     let token = localStorage.getItem("auth-token");
     try {
-      fetch("/office/getPatients", {
+      fetch("/api/office/getPatients", {
         method: "GET",
         headers: {
           "x-auth-token": token,
@@ -72,7 +72,7 @@ const OfficeAppointments = () => {
     setAllSchedList([]);
     let token = localStorage.getItem("auth-token");
     try {
-      fetch("/office/getSchedules", {
+      fetch("/api/office/getSchedules", {
         method: "GET",
         headers: {
           "x-auth-token": token,

@@ -53,7 +53,7 @@ const RegisterModal = (props) => {
   const sendToServer = async () => {
     const data = { fields, birthdate };
     try {
-      await fetch("/auth/register", {
+      await fetch("/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
