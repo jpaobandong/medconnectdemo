@@ -5,7 +5,7 @@ import SwitchNavBar from "./components/navbar/SwitchNavbar";
 import Home from "./components/pages/Home";
 import Appointments from "./components/pages/patient_pages/Appointments";
 import Records from "./components/pages/patient_pages/Records";
-import DoctorsList from "./components/pages/patient_pages/DoctorsList";
+import PatientProfile from "./components/pages/patient_pages/Profile";
 import Verification from "./components/pages/Verification";
 import UserContext from "./context/UserContext";
 import PatientRoute from "./components/hocs/PatientRoute";
@@ -17,6 +17,7 @@ import OfficeRoute from "./components/hocs/OfficeRoute";
 import OfficeAppointments from "./components/pages/office_pages/OfficeAppointments";
 import OfficePatientsList from "./components/pages/office_pages/OfficePatientsList";
 import OfficeRecords from "./components/pages/office_pages/OfficeRecords";
+import Dashboard from "./components/pages/patient_pages/Dashboard";
 
 function App() {
   const [userData, setUserData] = useState({
@@ -70,17 +71,19 @@ function App() {
 
             <GuestRoute exact path="/" component={Home} />
             <GuestRoute path="/verification" component={Verification} />
+
             <PatientRoute
               path="/patient/appointments"
               component={Appointments}
             />
-            <PatientRoute path="/patient/doctorslist" component={DoctorsList} />
             <PatientRoute path="/patient/records" component={Records} />
-            <PatientRoute exact path="/patient/" component={Appointments} />
-            {/* TODO: Optimize this redirect */}
+            <PatientRoute path="/patient/profile" component={PatientProfile} />
+            <PatientRoute exact path="/patient/" component={Dashboard} />
+
             <AdminRoute path="/admin/accounts" component={PatientAccounts} />
             <AdminRoute path="/admin/offices" component={OfficeAccounts} />
             <AdminRoute exact path="/admin/" component={PatientAccounts} />
+
             <OfficeRoute
               path="/office/appointments"
               component={OfficeAppointments}

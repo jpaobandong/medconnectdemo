@@ -1,5 +1,6 @@
 const auth_middleware = require("../middleware/auth_middleware");
 const Office = require("../models/Office");
+const Patient = require("../models/Patient");
 const Schedule = require("../models/Schedule");
 
 const router = require("express").Router();
@@ -13,6 +14,20 @@ router.get("/getDoctors", auth_middleware.patient_auth, (req, res) => {
       });
 
     return res.status(200).json({ list });
+  }).select("-password -role");
+});
+
+router.get("/getDoctors/:id", auth_middleware.patient_auth, (req, res) => {
+  const _id = req.params.id;
+
+  Office.find({ _id }, (err, doctor) => {
+    if (err)
+      return res.status(500).json({
+        msg: { body: "Server Error: " + err.message },
+        msgError: true,
+      });
+
+    return res.status(200).json({ doctor });
   }).select("-password -role");
 });
 
@@ -79,6 +94,95 @@ router.get("/getSchedules", auth_middleware.patient_auth, (req, res) => {
       });
 
     return res.status(200).json({ list });
+  });
+});
+
+router.get("/getSchedules/:id", auth_middleware.patient_auth, (req, res) => {
+  const patient_id = req.params.id;
+
+  Schedule.find({ patient_id }, (err, scheds) => {
+    if (err)
+      return res.status(500).json({
+        msg: { body: "Server Error: " + err.message },
+        msgError: true,
+      });
+
+    return res.status(200).json({ scheds });
+  });
+});
+
+router.get("/getName/:id", auth_middleware.patient_auth, (req, res) => {
+  const _id = req.params.id;
+
+  Patient.find({ _id }, (err, user) => {
+    if (err)
+      return res.status(500).json({
+        msg: { body: "Server Error: " + err.message },
+        msgError: true,
+      });
+
+    return res.status(200).json({ user });
+  }).select("firstName lastName");
+});
+
+router.get("/:id", auth_middleware.patient_auth, (req, res) => {
+  const _id = req.params.id;
+
+  Patient.findById({ _id }, (err, user) => {
+    if (err)
+      return res.status(500).json({
+        msg: { body: "Server Error: " + err.message },
+        msgError: true,
+      });
+
+    return res.status(200).json({ user });
+  }).select("-password -role");
+});
+
+router.delete("/deactivate/:id", auth_middleware.patient_auth, (req, res) => {
+  const _id = req.params.id;
+  const user = req.user;
+  if (_id !== user.id)
+    return res.status(403).json({
+      msg: { body: "Request Forbidden." },
+      msgError: true,
+    });
+
+  Patient.findByIdAndDelete({ _id }, (err) => {
+    if (err)
+      return res.status(500).json({
+        msg: { body: "Server Error: " + err },
+        msgError: true,
+      });
+  });
+
+  return res.status(200).json({
+    msg: { body: "Account deactivated!" },
+    msgError: false,
+  });
+});
+
+router.put("/update/:id", auth_middleware.patient_auth, (req, res) => {
+  const _id = req.params.id;
+  const user = req.user;
+  const fields = req.body;
+  if (_id !== user.id)
+    return res.status(403).json({
+      msg: { body: "Request Forbidden." },
+      msgError: true,
+    });
+
+  Patient.findOneAndUpdate({ _id }, fields, (err) => {
+    if (err)
+      return res.status(500).json({
+        msg: { body: "Server Error: " + err },
+        msgError: true,
+      });
+  });
+
+  return res.status(200).json({
+    msg: { body: "Account updated!" },
+    msgError: false,
   });
 });
 

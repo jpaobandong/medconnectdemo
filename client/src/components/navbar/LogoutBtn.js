@@ -1,5 +1,5 @@
 import React, { useContext } from "react";
-import { Button } from "react-bootstrap";
+import { Button, Dropdown } from "react-bootstrap";
 import UserContext from "../../context/UserContext";
 
 const LogoutButton = (props) => {
@@ -16,7 +16,7 @@ const LogoutButton = (props) => {
 
   return (
     <>
-      <Button onClick={logout}>Logout</Button>
+      <Dropdown.Item onClick={logout}>Logout</Dropdown.Item>
     </>
   );
 };

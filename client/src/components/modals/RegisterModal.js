@@ -7,13 +7,8 @@ const RegisterModal = (props) => {
     email: "",
     firstName: "",
     lastName: "",
-    street: "",
-    city: "",
-    province: "",
     password: "",
     confirm: "",
-    contactNo: "",
-    sex: "female",
   });
   const [birthdate, setBirthdate] = useState(null);
 
@@ -115,13 +110,7 @@ const RegisterModal = (props) => {
       fields.password === "" ||
       fields.firstName === "" ||
       fields.lastName === "" ||
-      fields.street === "" ||
-      fields.city === "" ||
-      fields.province === "" ||
-      fields.confirm === "" ||
-      fields.sex === "" ||
-      fields.contactNo === "" ||
-      birthdate === null
+      fields.confirm === ""
     ) {
       if (birthdate === null) {
         setAlertContent({
@@ -161,9 +150,6 @@ const RegisterModal = (props) => {
       email: "",
       firstName: "",
       lastName: "",
-      street: "",
-      city: "",
-      province: "",
       password: "",
       confirm: "",
     });
@@ -178,7 +164,9 @@ const RegisterModal = (props) => {
 
   return (
     <Modal show={props.show} backdrop="static">
-      <Modal.Header>Register</Modal.Header>
+      <Modal.Header>
+        <b>Patient Registration</b>
+      </Modal.Header>
       <Modal.Body>
         <Form>
           <Form.Row>
@@ -203,43 +191,6 @@ const RegisterModal = (props) => {
                   onChange={onChange}
                   value={fields.lastName}
                   name="lastName"
-                />
-              </Form.Group>
-            </Col>
-          </Form.Row>
-
-          <Form.Row>
-            <Col>
-              <Form.Group>
-                <Form.Label className="mr-3">Birthdate</Form.Label>
-                <DatePicker
-                  className="pt-1"
-                  onChange={setBirthdate}
-                  value={birthdate}
-                  maxDate={new Date()}
-                />
-              </Form.Group>
-            </Col>
-            <Col>
-              <Form.Label className="mr-3">Sex</Form.Label>
-              <Form.Control
-                as="select"
-                value={fields.sex}
-                onChange={onChange}
-                name="sex"
-              >
-                <option value="female">Female</option>
-                <option value="male">Male</option>
-              </Form.Control>
-            </Col>
-            <Col>
-              <Form.Group>
-                <Form.Label>Contact No.</Form.Label>
-                <Form.Control
-                  type="text"
-                  onChange={onChange}
-                  value={fields.contactNo}
-                  name="contactNo"
                 />
               </Form.Group>
             </Col>
@@ -281,47 +232,6 @@ const RegisterModal = (props) => {
                   onChange={onChange}
                   value={fields.confirm}
                   name="confirm"
-                />
-              </Form.Group>
-            </Col>
-          </Form.Row>
-
-          <Form.Row>
-            <Col>
-              <Form.Group>
-                <Form.Label>Street Address</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="101 Rizal street"
-                  onChange={onChange}
-                  value={fields.street}
-                  name="street"
-                />
-              </Form.Group>
-            </Col>
-          </Form.Row>
-          <Form.Row>
-            <Col>
-              <Form.Group>
-                <Form.Label>City</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Dagupan"
-                  onChange={onChange}
-                  value={fields.city}
-                  name="city"
-                />
-              </Form.Group>
-            </Col>
-            <Col>
-              <Form.Group>
-                <Form.Label>Province</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Pangasinan"
-                  onChange={onChange}
-                  value={fields.province}
-                  name="province"
                 />
               </Form.Group>
             </Col>

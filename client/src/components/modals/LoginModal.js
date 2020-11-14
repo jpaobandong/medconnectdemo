@@ -74,7 +74,7 @@ const LoginModal = (props) => {
               switch (data.user.role) {
                 case "patient":
                   props.toggle();
-                  props.history.push("/patient/appointments");
+                  props.history.push("/patient/");
                   break;
                 case "admin":
                   props.toggle();

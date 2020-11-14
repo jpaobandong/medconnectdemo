@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const Schedule = require("./Schedule");
 
 const PatientSchema = new mongoose.Schema({
   email: {
@@ -19,33 +20,61 @@ const PatientSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  birthdate: {
-    type: Date,
-    required: true,
-  },
   contactNo: {
     type: String,
-    required: true,
+    default: "",
   },
-  sex: {
-    type: String,
-    required: true,
+  details: {
+    birthdate: {
+      month: { type: String, default: "" },
+      day: { type: String, default: "" },
+      year: { type: String, default: "" },
+    },
+    sex: {
+      type: String,
+      default: "",
+    },
+    address: {
+      street: {
+        type: String,
+        default: "",
+      },
+      city: {
+        type: String,
+        default: "",
+      },
+      province: {
+        type: String,
+        default: "",
+      },
+    },
+    philhealthNo: {
+      type: String,
+      default: "",
+    },
+    pwdNo: {
+      type: String,
+      default: "",
+    },
+    seniorNo: {
+      type: String,
+      default: "",
+    },
   },
-  address: {
-    street: {
+  medHist: {
+    drugallergies: {
       type: String,
-      required: true,
+      default: "",
     },
-    city: {
+    medications: {
       type: String,
-      required: true,
+      default: "",
     },
-    province: {
+    otherillness: {
       type: String,
-      required: true,
+      default: "",
     },
   },
-
   role: {
     type: String,
     default: "patient",
@@ -68,6 +97,11 @@ PatientSchema.pre("save", function (next) {
     this.password = passwordHash;
     next();
   });
+});
+
+PatientSchema.pre("remove", function (next) {
+  Schedule.remove({ patient_id: this._id }).exec();
+  next();
 });
 
 PatientSchema.methods.comparePassword = function (password) {

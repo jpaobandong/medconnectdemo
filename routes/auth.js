@@ -30,31 +30,11 @@ const transporter = NodeMailer.createTransport({
 });
 
 router.post("/register", async (req, res) => {
-  const {
-    email,
-    password,
-    firstName,
-    lastName,
-    street,
-    city,
-    province,
-    contactNo,
-    sex,
-  } = req.body.fields;
+  const { email, password, firstName, lastName } = req.body.fields;
   const birthdate = req.body.birthdate;
   const vCode = generateVCode();
   try {
-    if (
-      !email ||
-      !firstName ||
-      !lastName ||
-      !street ||
-      !city ||
-      !province ||
-      !birthdate ||
-      !contactNo ||
-      !sex
-    ) {
+    if (!email || !firstName || !lastName || !password) {
       return res
         .status(400)
         .json({ msg: { body: "All fields required" }, msgError: true });
@@ -113,14 +93,6 @@ router.post("/register", async (req, res) => {
       password,
       firstName,
       lastName,
-      birthdate,
-      contactNo,
-      sex,
-      address: {
-        street,
-        city,
-        province,
-      },
       createdAt: dateCreated,
     });
 
@@ -193,7 +165,11 @@ router.post("/login", async (req, res) => {
           .json({ msg: { body: "Invalid credentials" }, msgError: true });
       }
       const token = jwt.sign(
-        { id: user.id, role: "admin" },
+        {
+          id: user.id,
+          role: "admin",
+          name: user.firstName + " " + user.lastName,
+        },
         process.env.JWT_SECRET,
         {
           expiresIn: "12h",
