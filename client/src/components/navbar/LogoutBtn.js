@@ -3,13 +3,16 @@ import { Button, Dropdown } from "react-bootstrap";
 import UserContext from "../../context/UserContext";
 
 const LogoutButton = (props) => {
-  const { setUserData, setDidDeactivate } = useContext(UserContext);
+  const { setUserData, setDidDeactivate, setUserName } = useContext(
+    UserContext
+  );
 
   const logout = () => {
     setUserData({
       token: null,
       user: null,
     });
+    setUserName("");
     setDidDeactivate(false);
     localStorage.setItem("auth-token", "");
     props.history.push("/");

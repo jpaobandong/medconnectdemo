@@ -32,20 +32,7 @@ const PatientAccounts = () => {
     }
   };
 
-  const loadTable = () => {
-    return list.map((patient) => {
-      const { _id, firstName, lastName, email, address } = patient;
-      return (
-        <tr key={_id}>
-          <td>{lastName + ", " + firstName}</td>
-          <td>
-            {address.street + ", " + address.city + ", " + address.province}
-          </td>
-          <td>{email}</td>
-        </tr>
-      );
-    });
-  };
+  const loadTable = () => {};
 
   useEffect(() => {
     getPatientAccounts();
@@ -66,7 +53,7 @@ const PatientAccounts = () => {
                 <th>Email</th>
               </tr>
             </thead>
-            <tbody>{loadTable()}</tbody>
+            <tbody></tbody>
           </Table>
         ) : (
           <Container>

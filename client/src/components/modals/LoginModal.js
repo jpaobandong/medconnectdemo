@@ -3,7 +3,7 @@ import { Modal, Button, Form, Alert } from "react-bootstrap";
 import UserContext from "../../context/UserContext";
 
 const LoginModal = (props) => {
-  const { setUserData } = useContext(UserContext);
+  const { setUserData, setUserName } = useContext(UserContext);
   const [credentials, setUserCredentials] = useState({
     email: "",
     password: "",
@@ -18,6 +18,29 @@ const LoginModal = (props) => {
   //change the value of credentials hook on change of field inpu
   const onChange = (e) => {
     setUserCredentials({ ...credentials, [e.target.name]: e.target.value });
+  };
+
+  const getName = (giventoken, givenid) => {
+    try {
+      fetch(`/api/patient/getName/${givenid}`, {
+        method: "GET",
+        headers: {
+          "x-auth-token": giventoken,
+        },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          if (data.msgError) {
+            console.log(data.msg.body);
+          } else {
+            setUserName(`${data.user[0].firstName} ${data.user[0].lastName}`);
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   //event handler of submit button
@@ -71,18 +94,22 @@ const LoginModal = (props) => {
                 token: data.token,
                 user: data.user,
               });
+
               switch (data.user.role) {
                 case "patient":
+                  getName(data.token, data.user.id);
                   props.toggle();
                   props.history.push("/patient/");
                   break;
                 case "admin":
+                  setUserName("Admin");
                   props.toggle();
-                  props.history.push("/admin/accounts");
+                  props.history.push("/admin/");
                   break;
                 case "office":
+                  getName(data.token, data.user.id);
                   props.toggle();
-                  props.history.push("/office/appointments");
+                  props.history.push("/office/");
                   break;
                 default:
                   props.toggle();

@@ -1,4 +1,4 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext } from "react";
 import { Navbar, Nav, Dropdown, DropdownButton } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import LogoutButton from "./LogoutBtn";

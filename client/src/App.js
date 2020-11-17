@@ -18,6 +18,7 @@ import OfficeAppointments from "./components/pages/office_pages/OfficeAppointmen
 import OfficePatientsList from "./components/pages/office_pages/OfficePatientsList";
 import OfficeRecords from "./components/pages/office_pages/OfficeRecords";
 import Dashboard from "./components/pages/patient_pages/Dashboard";
+import AdminDash from "./components/pages/admin_pages/AdminDashboard";
 
 function App() {
   const [userData, setUserData] = useState({
@@ -75,7 +76,9 @@ function App() {
                 token,
                 user: data.user,
               });
-              getName(token, data.user.id);
+
+              if (data.user.role === "admin") setUserName("Admin");
+              else getName(token, data.user.id);
             }
 
             setIsLoaded(true);
@@ -119,7 +122,7 @@ function App() {
 
             <AdminRoute path="/admin/accounts" component={PatientAccounts} />
             <AdminRoute path="/admin/offices" component={OfficeAccounts} />
-            <AdminRoute exact path="/admin/" component={PatientAccounts} />
+            <AdminRoute exact path="/admin/" component={AdminDash} />
 
             <OfficeRoute
               path="/office/appointments"

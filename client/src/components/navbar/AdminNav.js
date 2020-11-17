@@ -1,15 +1,30 @@
-import React from "react";
-import { Navbar, Nav } from "react-bootstrap";
+import React, { useContext, useState } from "react";
+import { Navbar, Nav, DropdownButton, Dropdown } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
+import UserContext from "../../context/UserContext";
 import LogoutButton from "./LogoutBtn";
 
 const AdminNav = () => {
+  const { userName } = useContext(UserContext);
   const hist = useHistory();
+
+  const [show, setShow] = useState(false);
+
+  const onMenuClick = () => {
+    setShow(!show);
+  };
 
   return (
     <>
       <Navbar bg="primary" expand="lg" variant="dark">
-        <Navbar.Brand>MedConnect</Navbar.Brand>
+        <Navbar.Brand
+          href="#"
+          onClick={() => {
+            hist.push("/admin");
+          }}
+        >
+          MedConnect
+        </Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav
@@ -27,7 +42,17 @@ const AdminNav = () => {
             </Nav.Item>
           </Nav>
           <Nav className="end">
-            <LogoutButton history={hist} />
+            <DropdownButton
+              show={show}
+              onClick={onMenuClick}
+              menuAlign="right"
+              title={userName}
+              id="dropdown-menu-align-right"
+            >
+              <Dropdown.Item>My Account</Dropdown.Item>
+              <Dropdown.Divider />
+              <LogoutButton history={hist} />
+            </DropdownButton>
           </Nav>
         </Navbar.Collapse>
       </Navbar>
