@@ -6,38 +6,12 @@ import UserContext from "../../context/UserContext";
 
 const PatientNav = () => {
   const hist = useHistory();
-  const { userData } = useContext(UserContext);
-  const [patientName, setPatientName] = useState("");
+  const { userName } = useContext(UserContext);
+  const [show, setShow] = useState(false);
 
-  const getName = () => {
-    try {
-      let token = localStorage.getItem("auth-token");
-      fetch(`/api/patient/getName/${userData.user.id}`, {
-        method: "GET",
-        headers: {
-          "x-auth-token": token,
-        },
-      })
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          if (data.msgError) {
-            console.log(data.msg.body);
-          } else {
-            setPatientName(
-              `${data.user[0].firstName} ${data.user[0].lastName}`
-            );
-          }
-        });
-    } catch (error) {
-      console.log(error);
-    }
+  const onMenuClick = () => {
+    setShow(!show);
   };
-
-  useEffect(() => {
-    getName();
-  }, []);
 
   return (
     <>
@@ -67,8 +41,10 @@ const PatientNav = () => {
           </Nav>
           <Nav className="end">
             <DropdownButton
+              show={show}
+              onClick={onMenuClick}
               menuAlign="right"
-              title={patientName === "" ? "User" : patientName}
+              title={userName}
               id="dropdown-menu-align-right"
             >
               <Dropdown.Item

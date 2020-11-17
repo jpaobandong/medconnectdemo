@@ -25,7 +25,34 @@ function App() {
     user: null,
   });
 
+  const [didDeactivate, setDidDeactivate] = useState(false);
+
+  const [userName, setUserName] = useState("");
+
   const [isLoaded, setIsLoaded] = useState(false);
+
+  const getName = (giventoken, givenid) => {
+    try {
+      fetch(`/api/patient/getName/${givenid}`, {
+        method: "GET",
+        headers: {
+          "x-auth-token": giventoken,
+        },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          if (data.msgError) {
+            console.log(data.msg.body);
+          } else {
+            setUserName(`${data.user[0].firstName} ${data.user[0].lastName}`);
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const checkLogin = async () => {
     let token = localStorage.getItem("auth-token");
@@ -33,28 +60,29 @@ function App() {
     if (token === null) {
       localStorage.setItem("auth-token", "");
       token = "";
-    }
+    } else {
+      try {
+        await fetch("/api/auth/authenticateUser", {
+          method: "POST",
+          headers: {
+            "x-auth-token": token,
+          },
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            if (!data.msgError) {
+              setUserData({
+                token,
+                user: data.user,
+              });
+              getName(token, data.user.id);
+            }
 
-    try {
-      await fetch("/api/auth/authenticateUser", {
-        method: "POST",
-        headers: {
-          "x-auth-token": token,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (!data.msgError) {
-            setUserData({
-              token,
-              user: data.user,
-            });
-          }
-
-          setIsLoaded(true);
-        });
-    } catch (err) {
-      console.log(err.response);
+            setIsLoaded(true);
+          });
+      } catch (err) {
+        console.log(err.response);
+      }
     }
   };
 
@@ -66,7 +94,16 @@ function App() {
     return (
       <div className="App">
         <BrowserRouter>
-          <UserContext.Provider value={{ userData, setUserData }}>
+          <UserContext.Provider
+            value={{
+              userData,
+              setUserData,
+              didDeactivate,
+              setDidDeactivate,
+              userName,
+              setUserName,
+            }}
+          >
             <SwitchNavBar />
 
             <GuestRoute exact path="/" component={Home} />

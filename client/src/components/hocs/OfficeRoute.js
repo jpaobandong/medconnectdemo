@@ -6,8 +6,8 @@ import Unauthorized from "../pages/Unauthorized";
 const OfficeRoute = ({ component: Component, ...rest }) => {
   const { userData } = useContext(UserContext);
   const defaultRoutes = {
-    patient: "/patient/appointments",
-    office: "/office/appointments",
+    patient: "/patient/",
+    office: "/office/",
     admin: "/accounts",
   };
   return (

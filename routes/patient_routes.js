@@ -139,28 +139,42 @@ router.get("/:id", auth_middleware.patient_auth, (req, res) => {
   }).select("-password -role");
 });
 
-router.delete("/deactivate/:id", auth_middleware.patient_auth, (req, res) => {
-  const _id = req.params.id;
-  const user = req.user;
-  if (_id !== user.id)
-    return res.status(403).json({
-      msg: { body: "Request Forbidden." },
-      msgError: true,
-    });
+router.delete(
+  "/deactivate/:id",
+  auth_middleware.patient_auth,
+  async (req, res) => {
+    const _id = req.params.id;
+    const user = req.user;
+    const { password } = req.body;
 
-  Patient.findByIdAndDelete({ _id }, (err) => {
-    if (err)
-      return res.status(500).json({
-        msg: { body: "Server Error: " + err },
+    if (_id !== user.id)
+      return res.status(403).json({
+        msg: { body: "Request Forbidden." },
         msgError: true,
       });
-  });
 
-  return res.status(200).json({
-    msg: { body: "Account deactivated!" },
-    msgError: false,
-  });
-});
+    const userToDelete = await Patient.findOne({ _id });
+    const isMatch = await bcrypt.compare(password, userToDelete.password);
+
+    if (!isMatch)
+      return res
+        .status(400)
+        .json({ msg: { body: "Invalid password" }, msgError: true });
+
+    Patient.findByIdAndDelete({ _id }, (err) => {
+      if (err)
+        return res.status(500).json({
+          msg: { body: "Server Error: " + err },
+          msgError: true,
+        });
+    });
+
+    return res.status(200).json({
+      msg: { body: "Account deactivated!" },
+      msgError: false,
+    });
+  }
+);
 
 router.put("/update/:id", auth_middleware.patient_auth, (req, res) => {
   const _id = req.params.id;
@@ -201,11 +215,12 @@ router.put(
       });
 
     const userToUpdate = await Patient.findOne({ _id });
+    const isMatch = await bcrypt.compare(oldPass, userToUpdate.password);
 
-    if (!userToUpdate.comparePassword(oldPass))
+    if (!isMatch)
       return res
         .status(400)
-        .json({ msg: { body: "Invalid credentials" }, msgError: true });
+        .json({ msg: { body: "Invalid password" }, msgError: true });
 
     const bcNewPass = bcrypt.hashSync(newPass, 10, (err) => {
       if (err)
