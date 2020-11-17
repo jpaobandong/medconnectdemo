@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Container, Form, InputGroup } from "react-bootstrap";
+import { Container, Form, InputGroup, Alert } from "react-bootstrap";
 import { Button } from "@material-ui/core";
 import { Edit, Save, Clear, Update } from "@material-ui/icons";
 import UserContext from "../../../context/UserContext";
@@ -41,6 +41,12 @@ const PatientProfile = () => {
     newPass: "",
     confirmNew: "",
   });
+  const [pwAlert, setPwAlert] = useState({
+    content: "",
+    show: false,
+    variant: "danger",
+  });
+  const [isSendingData, setIsSending] = useState(false);
   const [accntFormStat, setAccntFormStat] = useState(true);
 
   const months = [
@@ -183,23 +189,33 @@ const PatientProfile = () => {
     else
       return (
         <>
-          <Button
-            onClick={onCancel}
-            variant="outlined"
-            size="small"
-            startIcon={<Clear />}
-          >
-            Cancel
-          </Button>
-          <div className="mr-2"></div>
-          <Button
-            onClick={onSave}
-            variant="outlined"
-            size="small"
-            startIcon={<Save />}
-          >
-            Save
-          </Button>
+          {isSendingData ? (
+            <span
+              className="spinner-border spinner-border-sm"
+              role="status"
+              aria-hidden="true"
+            />
+          ) : (
+            <>
+              <Button
+                onClick={onCancel}
+                variant="outlined"
+                size="small"
+                startIcon={<Clear />}
+              >
+                Cancel
+              </Button>
+              <div className="mr-2"></div>
+              <Button
+                onClick={onSave}
+                variant="outlined"
+                size="small"
+                startIcon={<Save />}
+              >
+                Save
+              </Button>
+            </>
+          )}
         </>
       );
   };
@@ -230,6 +246,7 @@ const PatientProfile = () => {
   };
 
   const onSave = () => {
+    setIsSending(true);
     let token = localStorage.getItem("auth-token");
     try {
       fetch(`/api/patient/update/${userData.user.id}`, {
@@ -249,6 +266,7 @@ const PatientProfile = () => {
           } else {
             getPatient();
           }
+          setIsSending(false);
         });
     } catch (error) {
       console.log(error);
@@ -267,12 +285,59 @@ const PatientProfile = () => {
       updatePw.newPass === "" ||
       updatePw.confirmNew === ""
     ) {
-      console.log("all fields required");
+      setPwAlert({
+        content: "All fields required!",
+        show: true,
+        variant: "danger",
+      });
+    } else if (updatePw.newPass.length < 8) {
+      setPwAlert({
+        content: "Passwords must be at least 8 characters long.",
+        show: true,
+        variant: "danger",
+      });
+    } else if (updatePw.newPass !== updatePw.confirmNew) {
+      setPwAlert({
+        content: "New passwords don't match.",
+        show: true,
+        variant: "danger",
+      });
     } else {
-      if (updatePw.newPass !== updatePw.confirmNew) {
-        console.log("passwords do not match");
+      setIsSending(true);
+
+      try {
+        let token = localStorage.getItem("auth-token");
+        fetch(`/api/patient/changePass/${userData.user.id}`, {
+          method: "PUT",
+          headers: {
+            "x-auth-token": token,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(updatePw),
+        })
+          .then((response) => {
+            return response.json();
+          })
+          .then((data) => {
+            if (data.msgError) {
+              setPwAlert({
+                content: data.msg.body,
+                show: true,
+                variant: "danger",
+              });
+              setIsSending(false);
+            } else {
+              setPwAlert({
+                content: data.msg.body,
+                show: true,
+                variant: "success",
+              });
+              setIsSending(false);
+            }
+          });
+      } catch (error) {
+        setPwAlert({ content: error, variant: "danger", show: true });
       }
-      console.log(updatePw);
     }
   };
 
@@ -751,16 +816,32 @@ const PatientProfile = () => {
               </div>
             </Form.Row>
 
+            <Form.Row>
+              <div className="col-5">
+                <Alert show={pwAlert.show} variant={pwAlert.variant}>
+                  {pwAlert.content}
+                </Alert>
+              </div>
+            </Form.Row>
+
             <Form.Row className="align-items-center m-2">
               <div className="col-5 text-right">
-                <Button
-                  onClick={onUpdatePW}
-                  variant="outlined"
-                  size="small"
-                  startIcon={<Update />}
-                >
-                  Update Password
-                </Button>
+                {isSendingData ? (
+                  <span
+                    className="spinner-border spinner-border-sm"
+                    role="status"
+                    aria-hidden="true"
+                  />
+                ) : (
+                  <Button
+                    onClick={onUpdatePW}
+                    variant="outlined"
+                    size="small"
+                    startIcon={<Update />}
+                  >
+                    Update Password
+                  </Button>
+                )}
               </div>
             </Form.Row>
             {/* ==================DEACTIVATE ACCOUNT=================== */}

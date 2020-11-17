@@ -121,7 +121,15 @@ const RegisterModal = (props) => {
 
         return false;
       }
-      if (fields.password !== fields.confirm) {
+      if (fields.password.length < 8) {
+        setAlertContent({
+          show: true,
+          content: "Passwords must be at least 8 characters long.",
+          variant: "danger",
+        });
+        return false;
+       }
+      if(fields.password !== fields.confirm) {
         setAlertContent({
           show: true,
           content: "Passwords do not match!",

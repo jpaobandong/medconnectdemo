@@ -2,7 +2,7 @@ const auth_middleware = require("../middleware/auth_middleware");
 const Office = require("../models/Office");
 const Patient = require("../models/Patient");
 const Schedule = require("../models/Schedule");
-
+const bcrypt = require("bcryptjs");
 const router = require("express").Router();
 
 router.get("/getDoctors", auth_middleware.patient_auth, (req, res) => {
@@ -185,5 +185,49 @@ router.put("/update/:id", auth_middleware.patient_auth, (req, res) => {
     msgError: false,
   });
 });
+
+router.put(
+  "/changePass/:id",
+  auth_middleware.patient_auth,
+  async (req, res) => {
+    const _id = req.params.id;
+    const user = req.user;
+    const { oldPass, newPass } = req.body;
+
+    if (_id !== user.id)
+      return res.status(403).json({
+        msg: { body: "Request Forbidden." },
+        msgError: true,
+      });
+
+    const userToUpdate = await Patient.findOne({ _id });
+
+    if (!userToUpdate.comparePassword(oldPass))
+      return res
+        .status(400)
+        .json({ msg: { body: "Invalid credentials" }, msgError: true });
+
+    const bcNewPass = bcrypt.hashSync(newPass, 10, (err) => {
+      if (err)
+        return res.status(500).json({
+          msg: { body: "Server Error: " + err },
+          msgError: true,
+        });
+    });
+
+    Patient.updateOne({ _id }, { password: bcNewPass }, (err) => {
+      if (err)
+        return res.status(500).json({
+          msg: { body: "Server Error: " + err },
+          msgError: true,
+        });
+    });
+
+    return res.status(200).json({
+      msg: { body: "Account updated!" },
+      msgError: false,
+    });
+  }
+);
 
 module.exports = router;
