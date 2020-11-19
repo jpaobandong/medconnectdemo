@@ -19,6 +19,28 @@ const OfficeSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  specialization: {
+    type: String,
+    default: "",
+  },
+  contactNo: {
+    type: String,
+    default: "",
+  },
+  clinicDays: {
+    type: [String],
+    default: [],
+  },
+  clinicHours: {
+    start: {
+      type: String,
+      default: "",
+    },
+    end: {
+      type: String,
+      default: "",
+    },
+  },
   address: {
     roomNumber: {
       type: String,
@@ -41,6 +63,7 @@ const OfficeSchema = new mongoose.Schema({
       required: true,
     },
   },
+
   role: {
     type: String,
     default: "office",

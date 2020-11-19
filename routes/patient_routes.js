@@ -69,6 +69,7 @@ router.post(
       office_id: office_id,
       date: req_date,
       timeslot: req_timeslot,
+      dateObj: `${req_date.month}-${req_date.day}-${req_date.year}`,
       createdOn: new Date(),
     });
     newSched.save((err) => {

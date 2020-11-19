@@ -46,7 +46,12 @@ const Dashboard = () => {
                     e.timeslot
                 )
               ) {
-                setUpcomingList((oldList) => [
+                if (
+                  isToday(e.date.month + " " + e.date.day + " " + e.date.year)
+                )
+                  setACT(appointCountToday + 1);
+
+                return setUpcomingList((oldList) => [
                   ...oldList,
                   {
                     _id: e._id,
@@ -60,12 +65,8 @@ const Dashboard = () => {
                     },
                   },
                 ]);
-                if (
-                  isToday(e.date.month + " " + e.date.day + " " + e.date.year)
-                )
-                  setACT(appointCountToday + 1);
               } else {
-                setFinishedList((oldList) => [
+                return setFinishedList((oldList) => [
                   ...oldList,
                   {
                     _id: e._id,

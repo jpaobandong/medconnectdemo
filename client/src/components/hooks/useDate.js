@@ -14,10 +14,14 @@ export const useDate = () => {
     };
   }, []);
 
-  const day = today.toLocaleDateString(locale, { weekday: "long" });
-  const date = `${today.toLocaleDateString(locale, {
+  const month = today.toLocaleDateString(locale, {
     month: "long",
-  })} ${today.getDate()}, ${today.getFullYear()} `;
+  });
+  const dateNum = today.getDate();
+  const year = today.getFullYear();
+  const day = today.toLocaleDateString(locale, { weekday: "long" });
+
+  const date = `${month} ${dateNum}, ${year} `;
 
   const hour = today.getHours();
   const wish = `Good ${
@@ -35,5 +39,8 @@ export const useDate = () => {
     date,
     time,
     wish,
+    month,
+    dateNum,
+    year,
   };
 };

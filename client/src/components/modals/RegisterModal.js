@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Modal, Button, Form, Alert, Col } from "react-bootstrap";
-import DatePicker from "react-date-picker";
 
 const RegisterModal = (props) => {
   const [fields, setFields] = useState({
@@ -128,8 +127,8 @@ const RegisterModal = (props) => {
           variant: "danger",
         });
         return false;
-       }
-      if(fields.password !== fields.confirm) {
+      }
+      if (fields.password !== fields.confirm) {
         setAlertContent({
           show: true,
           content: "Passwords do not match!",

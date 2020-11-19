@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const api = require("./routes/api");
 const path = require("path");
 require("dotenv").config();
+/* const { createDoctors, createPatients } = require("./dummyscript"); */
 
 //#initialize express framework-------express handles most of the process we'll be running
 const app = express();
@@ -31,6 +32,8 @@ mongoose.connect(
   (err) => {
     if (err) throw err;
     console.log("Connected to DB");
+    /* createPatients(100);
+    createDoctors(50); */
   }
 );
 

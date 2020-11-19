@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Spinner, Row } from "react-bootstrap";
-import { BrowserRouter, Switch } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import SwitchNavBar from "./components/navbar/SwitchNavbar";
 import Home from "./components/pages/Home";
 import Appointments from "./components/pages/patient_pages/Appointments";

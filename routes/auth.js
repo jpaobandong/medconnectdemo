@@ -31,7 +31,7 @@ const transporter = NodeMailer.createTransport({
 
 router.post("/register", async (req, res) => {
   const { email, password, firstName, lastName } = req.body.fields;
-  const birthdate = req.body.birthdate;
+
   const vCode = generateVCode();
   try {
     if (!email || !firstName || !lastName || !password) {
@@ -118,10 +118,12 @@ router.post("/register", async (req, res) => {
           from: '"MedConnect Admin" <medconnect.head@gmail.com>', // sender address
           to: email, // list of receivers
           subject: "MedConnect Account Verification", // Subject line
-          html:
-            "<h3>Please verify your account!</h3><br/><p>Your Verification code is: " +
-            vCode +
-            "</p>", // html body
+          html: `<h3>Please verify your account!</h3>
+            <br/>
+            <p>Your Verification code is: ${vCode} </p>
+            <br/><br/>
+            <p>Verify your account here: <a href="medconnectdemo.herokuapp.com">link</a> </p>
+            `, // html body
         },
         (err) => {
           if (err) console.log(err);
