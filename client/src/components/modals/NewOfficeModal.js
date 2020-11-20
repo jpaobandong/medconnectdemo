@@ -114,7 +114,7 @@ const NewOfficeModal = (props) => {
                 variant: "danger",
               });
             } else {
-              props.snackopen();
+              props.snackOpen();
               props.reloadList();
               props.toggle();
             }

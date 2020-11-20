@@ -1,174 +1,119 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Card,
-  Container,
-  CardColumns,
-  ListGroup,
-  ListGroupItem,
-} from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { Col, Container, Row } from "react-bootstrap";
 import UserContext from "../../../context/UserContext";
 import { useDate } from "../../hooks/useDate";
+import DataTable from "react-data-table-component";
+import { makeStyles } from "@material-ui/core/styles";
+import LinearProgress from "@material-ui/core/LinearProgress";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: "100%",
+    "& > * + *": {
+      marginTop: theme.spacing(2),
+    },
+  },
+}));
+
+const LinearIndeterminate = () => {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.root}>
+      <LinearProgress />
+    </div>
+  );
+};
+
+const dateSort = (a, b) => {
+  let aDate = new Date(
+    a.date.month + " " + a.date.day + " " + a.date.year + " " + a.timeslot
+  );
+  let bDate = new Date(
+    b.date.month + " " + b.date.day + " " + b.date.year + " " + b.timeslot
+  );
+  if (aDate < bDate) return -1;
+  if (aDate > bDate) return 1;
+  return 0;
+};
+
+const columns = [
+  {
+    name: "Date & Time",
+    selector: "schedDateTime",
+    sortFunction: dateSort,
+    sortable: true,
+  },
+  {
+    name: "Doctor",
+    selector: "doctorName",
+  },
+  {
+    name: "Room",
+    selector: "office",
+  },
+
+  {
+    name: "Clinic Hours",
+    selector: "clinicHours",
+  },
+];
+
+const isUpcoming = (schedDate, date, time) => {
+  const sDate = new Date(schedDate);
+  const dateNow = new Date(date + " " + time);
+  if (sDate >= dateNow) return true;
+  else return false;
+};
 
 const Dashboard = () => {
-  const { wish, day, date, time } = useDate();
+  const { wish, day, date, time, month, dateNum, year } = useDate();
   const { userData } = useContext(UserContext);
-  const [appointCountToday, setACT] = useState(0);
-  const [upcomingList, setUpcomingList] = useState([]);
-  const [finishedList, setFinishedList] = useState([]);
-  const [nextAppointDoc, setNextAppointDoc] = useState({});
+  const [isLoading, setisLoading] = useState(true);
+  const [schedList, setSchedList] = useState([]);
 
-  const getSchedules = () => {
+  const getScheds = () => {
+    setSchedList([]);
     let token = localStorage.getItem("auth-token");
     try {
-      fetch(`/api/patient/getSchedules/${userData.user.id}`, {
-        method: "GET",
-        headers: {
-          "x-auth-token": token,
-        },
-      })
-        .then((response) => {
-          return response.json();
-        })
+      fetch(
+        `/api/patient/getSchedules/${userData.user.id}/${month}-${dateNum}-${year}`,
+        {
+          method: "GET",
+          headers: {
+            "x-auth-token": token,
+          },
+        }
+      )
+        .then((response) => response.json())
         .then((data) => {
           if (data.msgError) {
-            console.log(data.msg.body);
+            console.log(data.msg);
           } else {
-            data.scheds.map((e) => {
-              if (
-                isUpcoming(
-                  e.date.month +
-                    " " +
-                    e.date.day +
-                    " " +
-                    e.date.year +
-                    " " +
-                    e.timeslot
-                )
-              ) {
-                if (
-                  isToday(e.date.month + " " + e.date.day + " " + e.date.year)
-                )
-                  setACT(appointCountToday + 1);
-
-                return setUpcomingList((oldList) => [
-                  ...oldList,
-                  {
-                    _id: e._id,
-                    office_id: e.office_id,
-                    patient_id: e.patient_id,
-                    timeslot: e.timeslot,
-                    date: {
-                      month: e.date.month,
-                      day: e.date.day,
-                      year: e.date.year,
-                    },
-                  },
-                ]);
-              } else {
-                return setFinishedList((oldList) => [
-                  ...oldList,
-                  {
-                    _id: e._id,
-                    office_id: e.office_id,
-                    patient_id: e.patient_id,
-                    timeslot: e.timeslot,
-                    date: {
-                      month: e.date.month,
-                      day: e.date.day,
-                      year: e.date.year,
-                    },
-                  },
-                ]);
-              }
+            data.list.map((e) => {
+              const schedObj = {
+                doctorInfo: e.office_id,
+                date: e.date,
+                timeslot: e.timeslot,
+                schedDateTime: `${e.date.month} ${e.date.day}, ${e.date.year} ${e.timeslot}`,
+                doctorName: `${e.office_id.lastName}, ${e.office_id.firstName}`,
+                office: `Rm. ${e.office_id.address.roomNumber} ${e.office_id.address.building}`,
+                clinicDays: `${e.office_id.clinicDays}`,
+                clinicHours: `${e.office_id.clinicHours.start}-${e.office_id.clinicHours.end}`,
+              };
+              if (isUpcoming(schedObj.schedDateTime, date, time))
+                return setSchedList((oldList) => [...oldList, schedObj]);
             });
           }
+          setisLoading(false);
         });
-    } catch (error) {
-      console.log(error);
+    } catch (err) {
+      console.log(err.response);
     }
-  };
-
-  const getDoctor = (id) => {
-    let token = localStorage.getItem("auth-token");
-    try {
-      fetch(`/api/patient/getDoctors/${id}`, {
-        method: "GET",
-        headers: {
-          "x-auth-token": token,
-        },
-      })
-        .then((response) => {
-          return response.json();
-        })
-        .then((data) => {
-          setNextAppointDoc(data.doctor[0]);
-        });
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const dateSort = (a, b) => {
-    let aDate = new Date(
-      a.date.month + " " + a.date.day + " " + a.date.year + " " + a.timeslot
-    );
-    let bDate = new Date(
-      b.date.month + " " + b.date.day + " " + b.date.year + " " + b.timeslot
-    );
-    if (aDate < bDate) return -1;
-    if (aDate > bDate) return 1;
-    return 0;
-  };
-
-  const isUpcoming = (schedDate) => {
-    const sDate = new Date(schedDate);
-    const dateNow = new Date(date + " " + time);
-    if (sDate >= dateNow) return true;
-    else return false;
-  };
-
-  const isToday = (schedDate) => {
-    const sDate = new Date(schedDate);
-    const dateNow = new Date(date);
-    if (sDate.getTime() === dateNow.getTime()) return true;
-    else return false;
-  };
-
-  const loadPrevAppoint = () => {
-    finishedList.sort((a, b) => {
-      return dateSort(a, b);
-    });
-
-    var arrcopy = finishedList.slice(0, 3);
-
-    return arrcopy.map((e) => {
-      return (
-        <ListGroupItem key={e._id}>
-          {`${e.date.month} ${e.date.day}, ${e.date.year} \n${e.timeslot}`}
-        </ListGroupItem>
-      );
-    });
-  };
-
-  const loadUpcomingList = () => {
-    upcomingList.sort((a, b) => {
-      return dateSort(a, b);
-    });
-    getDoctor(upcomingList[0].office_id);
-    var arrcopy = upcomingList.slice(0, 3);
-
-    return arrcopy.map((e) => {
-      return (
-        <ListGroupItem key={e._id}>
-          <a href="#">{`${e.date.month} ${e.date.day}, ${e.date.year} \n${e.timeslot}`}</a>
-        </ListGroupItem>
-      );
-    });
   };
 
   useEffect(() => {
-    getSchedules();
+    getScheds();
   }, []);
 
   return (
@@ -176,69 +121,28 @@ const Dashboard = () => {
       <Container className="pt-3">
         <div className="p-2 mb-3 border border-info d-flex justify-content-between">
           {`${wish} `}
-          {appointCountToday === 0
+          {schedList.length === 0
             ? `You have no appointments today.`
-            : `You have ${appointCountToday} more appointment(s) today.`}
+            : `You have ${schedList.length} more appointment(s) today.`}
           <b>{`${day} ${date} ${time}`}</b>
         </div>
-        <CardColumns>
-          {/* ---------------------------------- */}
-          <Card /* style={{ width: "auto" }} */ id="upcoming-appointments-card">
-            <Card.Header>
-              <b>Upcoming Appointments</b> (Showing next 5)
-            </Card.Header>
-            {upcomingList.length === 0 ? (
-              <Card.Body>You do not have any upcoming appointments.</Card.Body>
-            ) : (
-              <ListGroup className="list-group-flush">
-                {loadUpcomingList()}
-              </ListGroup>
-            )}
-          </Card>
 
-          {/* ---------------------------------- */}
-
-          <Card /* style={{ width: "auto" }} */ id="next-appointment-card">
-            <Card.Header>
-              <b>Next Appointment</b>
-            </Card.Header>
-            {upcomingList.length === 0 ? (
-              <Card.Body>
-                You do not have any new appointments yet. You can create one{" "}
-                <Link to="/patient/appointments">here</Link>.
-              </Card.Body>
-            ) : (
-              <Card.Body>
-                <Card.Title>
-                  {`${upcomingList[0].date.month} ${upcomingList[0].date.day},
-                    ${upcomingList[0].date.year} ${upcomingList[0].timeslot}`}
-                </Card.Title>
-
-                {nextAppointDoc === undefined
-                  ? `Cannot get Doctor Information. You can contact the hospital administration through \n\n Email: medconnect.head@gmail.com \n Call/Text: +639063173242`
-                  : `${nextAppointDoc.lastName}, ${nextAppointDoc.firstName}`}
-              </Card.Body>
-            )}
-          </Card>
-          <br />
-
-          {/* ---------------------------------- */}
-
-          <Card /* style={{ width: "18rem" }} */ id="previous-appointment-card">
-            <Card.Header>
-              <b>Previous Appointment</b>
-            </Card.Header>
-            {finishedList.length === 0 ? (
-              <Card.Body>
-                You do not have any previous appointments yet
-              </Card.Body>
-            ) : (
-              <ListGroup className="list-group-flush">
-                {loadPrevAppoint()}
-              </ListGroup>
-            )}
-          </Card>
-        </CardColumns>
+        <Row>
+          <Col>
+            <DataTable
+              defaultSortField="schedDateTime"
+              title={
+                isLoading ? "Loading Appointments..." : "Appointments Today"
+              }
+              columns={columns}
+              data={schedList}
+              pagination // optionally, a hook to reset pagination to page 1
+              persistTableHead
+              progressPending={isLoading}
+              progressComponent={<LinearIndeterminate />}
+            />
+          </Col>
+        </Row>
       </Container>
     </>
   );

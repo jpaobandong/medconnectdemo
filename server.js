@@ -32,8 +32,8 @@ mongoose.connect(
   (err) => {
     if (err) throw err;
     console.log("Connected to DB");
-    /* createPatients(100);
-    createDoctors(50); */
+    /* createPatients(100);*/
+    /* createDoctors(3); */
   }
 );
 

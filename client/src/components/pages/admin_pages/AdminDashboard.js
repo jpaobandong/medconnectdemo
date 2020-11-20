@@ -59,8 +59,6 @@ const AdminDash = () => {
 
   const [isLoading, setisLoading] = useState(true);
 
-  const [resetPaginationToggle, setResetPaginationToggle] = useState(false);
-
   const getScheds = () => {
     setSchedList([]);
     let token = localStorage.getItem("auth-token");
@@ -115,8 +113,7 @@ const AdminDash = () => {
         }
         columns={columns}
         data={schedList}
-        pagination
-        paginationResetDefaultPage={resetPaginationToggle} // optionally, a hook to reset pagination to page 1
+        pagination // optionally, a hook to reset pagination to page 1
         persistTableHead
         progressPending={isLoading}
         progressComponent={<LinearIndeterminate />}

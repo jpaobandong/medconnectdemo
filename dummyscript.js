@@ -26,7 +26,7 @@ const createPatient = () => {
   };
 };
 
-const createPatients = (numPatients = 50) => {
+const createPatients = (numPatients = 1) => {
   var patient;
   for (let index = 0; index < numPatients; index++) {
     patient = new Patient(createPatient());
@@ -46,10 +46,10 @@ const createDoctor = () => {
     contactNo: faker.phone.phoneNumber(),
     specialization:
       specializations[Math.floor(Math.random() * specializations.length)],
-    clinicDays: [faker.date.weekday()],
+    clinicDays: ["Monday", "Tuesday", "Thursday"],
     clinicHours: {
-      start: "10:00 AM",
-      end: "03:00 PM",
+      start: "10:30 AM",
+      end: "01:00 PM",
     },
     address: {
       roomNumber: Math.floor(Math.random() * Math.floor(500)),

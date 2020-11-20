@@ -107,9 +107,72 @@ router.get("/getSchedules/:id", auth_middleware.patient_auth, (req, res) => {
         msg: { body: "Server Error: " + err.message },
         msgError: true,
       });
+  })
+    .populate({
+      path: "office_id",
+      select: "-password",
+    })
+    .exec((err, list) => {
+      if (err)
+        return res.status(500).json({
+          msg: { body: "Server Error: " + err.message },
+          msgError: true,
+        });
+      return res.status(200).json({ list });
+    });
+});
 
-    return res.status(200).json({ scheds });
-  });
+router.get(
+  "/getSchedules/:id/:month-:day-:year",
+  auth_middleware.patient_auth,
+  (req, res) => {
+    const { id, month, day, year } = req.params;
+
+    Schedule.find({
+      patient_id: id,
+      date: {
+        month,
+        day,
+        year,
+      },
+    })
+      .populate({
+        path: "office_id",
+        select: "-password",
+      })
+      .exec((err, list) => {
+        if (err)
+          return res.status(500).json({
+            msg: { body: "Server Error: " + err.message },
+            msgError: true,
+          });
+        return res.status(200).json({ list });
+      });
+  }
+);
+
+router.get("/getSchedFor/:id/on/:month-:day-:year", (req, res) => {
+  const { id, month, day, year } = req.params;
+
+  Schedule.find(
+    {
+      office_id: id,
+      date: {
+        month,
+        day,
+        year,
+      },
+    },
+    (err, result) => {
+      if (err)
+        return res.status(500).json({
+          msg: { body: "Server Error: " + err.message },
+          msgError: true,
+        });
+
+      return res.status(200).json({ result });
+    }
+  ).select("timeslot patient_id");
 });
 
 router.get("/getName/:id", auth_middleware.patient_auth, (req, res) => {
