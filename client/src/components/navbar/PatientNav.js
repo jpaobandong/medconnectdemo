@@ -13,6 +13,12 @@ const PatientNav = () => {
     setShow(!show);
   };
 
+  const hide = (e) => {
+    if (e && e.relatedTarget) {
+      e.relatedTarget.click();
+    }
+    setShow(false);
+  };
   return (
     <>
       <Navbar bg="primary" expand="lg" variant="dark">
@@ -41,6 +47,7 @@ const PatientNav = () => {
           </Nav>
           <Nav className="end">
             <DropdownButton
+              onBlur={hide}
               show={show}
               onClick={onMenuClick}
               menuAlign="right"
