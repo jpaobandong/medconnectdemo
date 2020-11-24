@@ -136,6 +136,7 @@ function office_auth(req, res, next) {
         msg: { body: "Unauthorized." },
         msgError: true,
       });
+
     req.user = {
       id: decoded.id,
       role: decoded.role,

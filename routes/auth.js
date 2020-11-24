@@ -344,4 +344,68 @@ router.post("/authenticateUser", auth_middlware.auth, (req, res) => {
   }
 });
 
+router.post("/mobilelogin", async (req, res) => {
+  const { email, password } = req.body;
+  try {
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ msg: { body: "All fields required" }, msgError: true });
+    }
+
+    //---------------------LOOK FOR USER IN PATIENTS COLLECTION-------------------//
+
+    let user = await Patient.findOne({ email: email });
+
+    if (user) {
+      const isMatch = await bcrypt.compare(password, user.password);
+
+      if (!isMatch) {
+        return res
+          .status(400)
+          .json({ msg: { body: "Invalid credentials" }, msgError: true });
+      }
+
+      if (!user.isVerified) {
+        return res.status(400).json({
+          msg: {
+            body: "Account not verified. Redirecting to verification page.",
+          },
+          msgError: true,
+          notVerified: true,
+        });
+      }
+
+      const token = jwt.sign(
+        { id: user.id, role: user.role },
+        process.env.JWT_SECRET,
+        {
+          expiresIn: "720h",
+        }
+      );
+      if (!token)
+        return res
+          .status(400)
+          .json({ msg: { body: "Server error" }, msgError: true });
+
+      return res.status(200).json({
+        token: token,
+        user: {
+          id: user.id,
+          role: user.role,
+        },
+      });
+    }
+
+    //---------------------IF EMAIL IS NOT IN THE DATABASE-------------------//
+    return res
+      .status(400)
+      .json({ msg: { body: "Invalid credentials" }, msgError: true });
+  } catch (err) {
+    return res
+      .status(500)
+      .json({ msg: { body: "Server Error: " + err.message }, msgError: true });
+  }
+});
+
 module.exports = router;

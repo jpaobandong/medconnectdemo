@@ -43,6 +43,31 @@ const LoginModal = (props) => {
     }
   };
 
+  const getDoctorName = (giventoken, givenid) => {
+    try {
+      fetch(`/api/office/getName/${givenid}`, {
+        method: "GET",
+        headers: {
+          "x-auth-token": giventoken,
+        },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          if (data.msgError) {
+            console.log(data.msg.body);
+          } else {
+            setUserName(
+              `Dr. ${data.user[0].firstName} ${data.user[0].lastName}`
+            );
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   //event handler of submit button
   const onClickSubmit = async (e) => {
     e.preventDefault();
@@ -107,7 +132,7 @@ const LoginModal = (props) => {
                   props.history.push("/admin/");
                   break;
                 case "office":
-                  getName(data.token, data.user.id);
+                  getDoctorName(data.token, data.user.id);
                   props.toggle();
                   props.history.push("/office/");
                   break;

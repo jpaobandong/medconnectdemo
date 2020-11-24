@@ -15,10 +15,11 @@ import PatientAccounts from "./components/pages/admin_pages/PatientAccounts";
 import OfficeAccounts from "./components/pages/admin_pages/OfficeAccounts";
 import OfficeRoute from "./components/hocs/OfficeRoute";
 import OfficeAppointments from "./components/pages/office_pages/OfficeAppointments";
-import OfficePatientsList from "./components/pages/office_pages/OfficePatientsList";
 import OfficeRecords from "./components/pages/office_pages/OfficeRecords";
 import Dashboard from "./components/pages/patient_pages/Dashboard";
 import AdminDash from "./components/pages/admin_pages/AdminDashboard";
+import OfficeDashboard from "./components/pages/office_pages/OfficeDashboard";
+import OfficeProfile from "./components/pages/office_pages/OfficeProfile";
 
 function App() {
   const [userData, setUserData] = useState({
@@ -55,6 +56,31 @@ function App() {
     }
   };
 
+  const getDoctorName = (giventoken, givenid) => {
+    try {
+      fetch(`/api/office/getName/${givenid}`, {
+        method: "GET",
+        headers: {
+          "x-auth-token": giventoken,
+        },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          if (data.msgError) {
+            console.log(data.msg.body);
+          } else {
+            setUserName(
+              `Dr. ${data.user[0].firstName} ${data.user[0].lastName}`
+            );
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   const checkLogin = async () => {
     let token = localStorage.getItem("auth-token");
 
@@ -78,6 +104,8 @@ function App() {
               });
 
               if (data.user.role === "admin") setUserName("Admin");
+              else if (data.user.role === "office")
+                getDoctorName(token, data.user.id);
               else getName(token, data.user.id);
             }
 
@@ -129,11 +157,8 @@ function App() {
               component={OfficeAppointments}
             />
             <OfficeRoute path="/office/records" component={OfficeRecords} />
-            <OfficeRoute
-              path="/office/patients"
-              component={OfficePatientsList}
-            />
-            <OfficeRoute exact path="/office/" component={OfficeAppointments} />
+            <OfficeRoute path="/office/profile" component={OfficeProfile} />
+            <OfficeRoute exact path="/office/" component={OfficeDashboard} />
           </UserContext.Provider>
         </BrowserRouter>
       </div>

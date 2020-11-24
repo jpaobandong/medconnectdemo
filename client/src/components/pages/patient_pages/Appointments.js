@@ -437,7 +437,7 @@ const Appointments = () => {
             });
           } else {
             setAlertContent({
-              content: data.msg.body,
+              content: `${data.msg.body}`,
               show: true,
               variant: "success",
             });
