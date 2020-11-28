@@ -1,38 +1,102 @@
 import React, { useState, useContext, useEffect } from "react";
-import { Container, Row, Table, Button, Spinner } from "react-bootstrap";
+import styled from "styled-components";
+import { Button, Container } from "react-bootstrap";
 import UserContext from "../../../context/UserContext";
+import DataTable from "react-data-table-component";
+import { makeStyles } from "@material-ui/core/styles";
+import LinearProgress from "@material-ui/core/LinearProgress";
+import { useDate } from "../../hooks/useDate";
+import { useHistory } from "react-router-dom";
+
+const useStyles = makeStyles((theme) => ({
+  root: {
+    width: "100%",
+    "& > * + *": {
+      marginTop: theme.spacing(2),
+    },
+  },
+}));
+
+const LinearIndeterminate = () => {
+  const classes = useStyles();
+
+  return (
+    <div className={classes.root}>
+      <LinearProgress />
+    </div>
+  );
+};
+
+const RecordBtn = styled(Button)`
+font-size: 10px;
+border-top-left-radius: 5px;
+border-bottom-left-radius: 5px;
+border-top-right-radius: 5px;
+border-bottom-right-radius: 5px;
+      columns={columns}
+text-align: center;
+display: flex;
+align-items: center;
+justify-content: center;
+`;
+
+const dateSort = (a, b) => {
+  let aDate = new Date(
+    a.date.month + " " + a.date.day + " " + a.date.year + " " + a.timeslot
+  );
+  let bDate = new Date(
+    b.date.month + " " + b.date.day + " " + b.date.year + " " + b.timeslot
+  );
+  if (aDate < bDate) return -1;
+  if (aDate > bDate) return 1;
+  return 0;
+};
+
+const isUpcoming = (schedDate, date) => {
+  const sDate = new Date(schedDate);
+  const dateNow = new Date(date);
+  if (sDate >= dateNow) return true;
+  else return false;
+};
 
 const OfficeAppointments = () => {
-  let currentDate = new Date();
-  const months = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
+  const history = useHistory();
+  const { wish, day, date, time, month, dateNum, year } = useDate();
   const { userData } = useContext(UserContext);
-  const [date, setDate] = useState({
-    month: months[currentDate.getMonth()],
-    day: String(currentDate.getDate()).padStart(2, "0"),
-    year: String(currentDate.getFullYear()),
-  });
-  const [allSchedList, setAllSchedList] = useState([]);
-  const [officeSchedList, setOfficeSchedList] = useState([]);
-  const [patientsList, setPatientsList] = useState([]);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [schedList, setSchedList] = useState([]);
+  const [isLoading, setisLoading] = useState(true);
 
-  const getPatientsList = () => {
+  const columns = [
+    {
+      name: "Date & Time",
+      selector: "schedDateTime",
+      sortFunction: dateSort,
+      sortable: true,
+    },
+    {
+      name: "Patient Name",
+      selector: "patientName",
+    },
+    /* {
+      name: "Actions",
+      button: true,
+      cell: (row) => (
+        <RecordBtn
+          onClick={() => {
+            history.push(`/appointment/${row._id}`);
+          }}
+        >
+          View Record
+        </RecordBtn>
+      ),
+    }, */
+  ];
+
+  const getScheds = () => {
+    setSchedList([]);
     let token = localStorage.getItem("auth-token");
     try {
-      fetch("/api/office/getPatients", {
+      fetch(`/api/office/getSchedules/`, {
         method: "GET",
         headers: {
           "x-auth-token": token,
@@ -44,169 +108,40 @@ const OfficeAppointments = () => {
             console.log(data.msg);
           } else {
             data.list.map((e) => {
-              return setPatientsList((oldList) => [
-                ...oldList,
-                {
-                  patient_id: e._id,
-                  patient_add:
-                    e.address.street +
-                    ", " +
-                    e.address.city +
-                    ", " +
-                    e.address.province,
-                  patient_name: e.lastName + ", " + e.firstName,
-                  patient_email: e.email,
-                  patient_birthdate: e.birthdate,
-                },
-              ]);
+              const schedObj = {
+                _id: e._id,
+                patientInfo: e.patient_id,
+                date: e.date,
+                timeslot: e.timeslot,
+                schedDateTime: `${e.date.month} ${e.date.day}, ${e.date.year} ${e.timeslot}`,
+                patientName: `${e.patient_id.lastName}, ${e.patient_id.firstName}`,
+              };
+              if (isUpcoming(schedObj.schedDateTime, date, time))
+                return setSchedList((oldList) => [...oldList, schedObj]);
             });
           }
+          setisLoading(false);
         });
     } catch (err) {
       console.log(err.response);
     }
-  };
-
-  const getAllSched = () => {
-    setOfficeSchedList([]);
-    setAllSchedList([]);
-    let token = localStorage.getItem("auth-token");
-    try {
-      fetch("/api/office/getSchedules", {
-        method: "GET",
-        headers: {
-          "x-auth-token": token,
-        },
-      })
-        .then((response) => response.json())
-        .then((data) => {
-          if (data.msgError) {
-            console.log(data.msg);
-          } else {
-            data.list.map((e) => {
-              if (userData.user.id === e.office_id) {
-                setOfficeSchedList((oldList) => [
-                  ...oldList,
-                  {
-                    _id: e._id,
-                    office_id: e.office_id,
-                    patient_id: e.patient_id,
-                    timeslot: e.timeslot,
-                    date: {
-                      month: e.date.month,
-                      day: e.date.day,
-                      year: e.date.year,
-                    },
-                  },
-                ]);
-              }
-              return setAllSchedList((oldList) => [
-                ...oldList,
-                {
-                  office_id: e.office_id,
-                  patient_id: e.patient_id,
-                  timeslot: e.timeslot,
-                  date: {
-                    month: e.date.month,
-                    day: e.date.day,
-                    year: e.date.year,
-                  },
-                },
-              ]);
-            });
-          }
-          setIsLoaded(true);
-        });
-    } catch (err) {
-      console.log(err.response);
-    }
-  };
-
-  const makeRecordClick = (e) => {
-    console.log(e.target.getAttribute("sched-id"));
-  };
-
-  const initTable = () => {
-    let newCurrentDate = new Date(
-      months[currentDate.getMonth()] +
-        " " +
-        String(currentDate.getDate()).padStart(2, "0") +
-        " " +
-        String(currentDate.getFullYear())
-    );
-
-    officeSchedList.sort((a, b) => {
-      const aDate = new Date(
-        a.date.month + " " + a.date.day + " " + a.date.year
-      );
-      const bDate = new Date(
-        b.date.month + " " + b.date.day + " " + b.date.year
-      );
-      if (aDate < bDate) return -1;
-      if (aDate > bDate) return 1;
-      return 0;
-    });
-
-    return officeSchedList.map((e) => {
-      let patient = {};
-      const dateObj = new Date(
-        e.date.month + " " + e.date.day + " " + e.date.year
-      );
-
-      patientsList.forEach((element) => {
-        if (e.patient_id === element.patient_id) patient = element;
-      });
-      if (dateObj >= newCurrentDate)
-        return (
-          <tr key={e._id}>
-            <td className="align-middle">
-              {e.date.month + " " + e.date.day + ", " + e.date.year}
-            </td>
-            <td className="align-middle">{e.timeslot}</td>
-            <td className="align-middle">
-              {patient ? patient.patient_name : "Error"}
-            </td>
-            <td className="align-middle">
-              <Button sched-id={e._id} size="sm" onClick={makeRecordClick}>
-                View Records
-              </Button>
-            </td>
-          </tr>
-        );
-
-      return null;
-    });
   };
 
   useEffect(() => {
-    getPatientsList();
-    getAllSched();
+    getScheds();
   }, []);
   return (
     <Container className="p-5">
-      <Row className="justify-content-between">
-        <h3>List of Appointments:</h3>
-      </Row>
-      {isLoaded ? (
-        <Table striped bordered hover>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Time</th>
-              <th>Name</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>{initTable()}</tbody>
-        </Table>
-      ) : (
-        <Container>
-          <Row className="justify-content-md-center p-5">
-            <Spinner animation="border" />
-            Loading...
-          </Row>
-        </Container>
-      )}
+      <DataTable
+        defaultSortField="schedDateTime"
+        title={isLoading ? "Loading Appointments..." : "Upcoming Appointments"}
+        columns={columns}
+        data={schedList}
+        pagination // optionally, a hook to reset pagination to page 1
+        persistTableHead
+        progressPending={isLoading}
+        progressComponent={<LinearIndeterminate />}
+      />
     </Container>
   );
 };

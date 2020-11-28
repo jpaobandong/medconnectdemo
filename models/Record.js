@@ -8,10 +8,6 @@ const RecordSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  civStatus: {
-    type: String,
-    required: true,
-  },
   weight: {
     type: String,
     required: true,
@@ -47,6 +43,10 @@ const RecordSchema = new mongoose.Schema({
     required: true,
   },
   complaints: {
+    type: String,
+    required: true,
+  },
+  labresults: {
     type: String,
     required: true,
   },

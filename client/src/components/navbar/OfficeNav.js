@@ -1,6 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Navbar, Nav, Dropdown, DropdownButton } from "react-bootstrap";
-import { useHistory } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import LogoutButton from "./LogoutBtn";
 import UserContext from "../../context/UserContext";
 
@@ -23,18 +23,13 @@ const OfficeNav = () => {
   return (
     <>
       <Navbar bg="primary" expand="lg" variant="dark">
-        <Navbar.Brand
-          href="#"
-          onClick={() => {
-            hist.push("/office");
-          }}
-        >
-          MedConnect
-        </Navbar.Brand>
+        <Link to="/office">
+          <Navbar.Brand>MedConnect</Navbar.Brand>
+        </Link>
+
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav
-            defaultActiveKey="/office/appointments"
             className="mr-auto"
             onSelect={(selectedKey) => {
               hist.push("/office/" + selectedKey);
@@ -45,9 +40,6 @@ const OfficeNav = () => {
             </Nav.Item>
             <Nav.Item>
               <Nav.Link eventKey="records">Records</Nav.Link>
-            </Nav.Item>
-            <Nav.Item>
-              <Nav.Link eventKey="patients">Patients</Nav.Link>
             </Nav.Item>
           </Nav>
           <Nav className="end">

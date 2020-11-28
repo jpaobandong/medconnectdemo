@@ -57,7 +57,7 @@ const AdminNav = () => {
               title={userName}
               id="dropdown-menu-align-right"
             >
-              <Dropdown.Item>My Account</Dropdown.Item>
+              {/* <Dropdown.Item>My Account</Dropdown.Item> */}
               <Dropdown.Divider />
               <LogoutButton history={hist} />
             </DropdownButton>

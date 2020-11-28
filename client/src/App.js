@@ -20,6 +20,7 @@ import Dashboard from "./components/pages/patient_pages/Dashboard";
 import AdminDash from "./components/pages/admin_pages/AdminDashboard";
 import OfficeDashboard from "./components/pages/office_pages/OfficeDashboard";
 import OfficeProfile from "./components/pages/office_pages/OfficeProfile";
+import PatientRecord from "./components/pages/office_pages/PatientRecord";
 
 function App() {
   const [userData, setUserData] = useState({
@@ -158,6 +159,10 @@ function App() {
             />
             <OfficeRoute path="/office/records" component={OfficeRecords} />
             <OfficeRoute path="/office/profile" component={OfficeProfile} />
+            <OfficeRoute
+              path="/office/appointment/:id"
+              component={PatientRecord}
+            />
             <OfficeRoute exact path="/office/" component={OfficeDashboard} />
           </UserContext.Provider>
         </BrowserRouter>

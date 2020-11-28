@@ -4,7 +4,15 @@ import UserContext from "../../../context/UserContext";
 import { useDate } from "../../hooks/useDate";
 import DataTable from "react-data-table-component";
 import { makeStyles } from "@material-ui/core/styles";
-import LinearProgress from "@material-ui/core/LinearProgress";
+import Alert from "@material-ui/lab/Alert";
+import {
+  IconButton,
+  Collapse,
+  Button,
+  LinearProgress,
+} from "@material-ui/core/";
+import CloseIcon from "@material-ui/icons/Close";
+import { Link } from "react-router-dom";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -71,6 +79,7 @@ const Dashboard = () => {
   const { userData } = useContext(UserContext);
   const [isLoading, setisLoading] = useState(true);
   const [schedList, setSchedList] = useState([]);
+  const [open, setOpen] = useState(false);
 
   const getScheds = () => {
     setSchedList([]);
@@ -112,18 +121,79 @@ const Dashboard = () => {
     }
   };
 
+  const getPatient = () => {
+    try {
+      let token = localStorage.getItem("auth-token");
+      fetch(`/api/patient/${userData.user.id}`, {
+        method: "GET",
+        headers: {
+          "x-auth-token": token,
+        },
+      })
+        .then((response) => {
+          return response.json();
+        })
+        .then((data) => {
+          if (data.msgError) {
+            console.log(data.msg.body);
+          } else {
+            if (
+              data.user.details.birthdate.month === "" ||
+              data.user.details.birthdate.day === "" ||
+              data.user.details.birthdate.year === "" ||
+              data.user.details.address.street === "" ||
+              data.user.details.address.city === "" ||
+              data.user.details.address.province === "" ||
+              data.user.details.sex === ""
+            )
+              setOpen(true);
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getScheds();
+    getPatient();
   }, []);
 
   return (
     <>
-      <Container className="pt-3">
+      <Container className="pt-2">
+        <div className="mb-2">
+          <Collapse in={open}>
+            <Alert
+              severity="warning"
+              action={
+                <IconButton
+                  aria-label="close"
+                  color="inherit"
+                  size="small"
+                  onClick={() => {
+                    setOpen(false);
+                  }}
+                >
+                  <CloseIcon fontSize="inherit" />
+                </IconButton>
+              }
+            >
+              In order for us to help you better, complete your profile{" "}
+              <b>
+                <Link to="/patient/profile">here</Link>
+              </b>
+              .
+            </Alert>
+          </Collapse>
+        </div>
         <div className="p-2 mb-3 border border-info d-flex justify-content-between">
           {`${wish} `}
-          {schedList.length === 0
-            ? `You have no appointments today.`
-            : `You have ${schedList.length} more appointment(s) today.`}
+          {schedList.length === 0 ? (
+            <>You have no appointments today.</>
+          ) : (
+            `You have ${schedList.length} more appointment(s) today.`
+          )}
           <b>{`${day} ${date} ${time}`}</b>
         </div>
 

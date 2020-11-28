@@ -1,0 +1,3 @@
+medconnect bugs:
+
+set appointment can be set more than once 

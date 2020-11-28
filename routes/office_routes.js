@@ -2,6 +2,7 @@ const auth_middleware = require("../middleware/auth_middleware");
 const Patient = require("../models/Patient");
 const Schedule = require("../models/Schedule");
 const bcrypt = require("bcryptjs");
+const Record = require("../models/Record");
 
 const router = require("express").Router();
 
@@ -18,7 +19,9 @@ router.get("/getPatients", auth_middleware.office_auth, (req, res) => {
 });
 
 router.get("/getSchedules", auth_middleware.office_auth, (req, res) => {
-  Schedule.find((err, list) => {
+  const user = req.user;
+
+  Schedule.find({ office_id: user.id }, (err, list) => {
     if (err)
       return res.status(500).json({
         msg: { body: "Server Error: " + err.message },
@@ -26,6 +29,8 @@ router.get("/getSchedules", auth_middleware.office_auth, (req, res) => {
       });
 
     return res.status(200).json({ list });
+  }).populate({
+    path: "patient_id",
   });
 });
 
@@ -56,6 +61,38 @@ router.get(
           });
         return res.status(200).json({ list });
       });
+  }
+);
+
+router.get(
+  "/getScheduleById/:id",
+  auth_middleware.office_auth,
+  async (req, res) => {
+    const user = req.user;
+    const id = req.params.id;
+
+    const sched = await Schedule.find(
+      { _id: id, office_id: user.id },
+      (err) => {
+        if (err)
+          return res.status(500).json({
+            msg: { body: "Server Error: " + err.message },
+            msgError: true,
+          });
+      }
+    ).populate("patient_id");
+
+    const record = await Record.find({ schedule_id: id }, (err) => {
+      if (err)
+        return res.status(500).json({
+          msg: { body: "Server Error: " + err.message },
+          msgError: true,
+        });
+    }).populate("schedule_id");
+
+    if (record.length === 0)
+      return res.status(200).json({ sched, record, hasRecord: false });
+    else return res.status(200).json({ sched, record, hasRecord: true });
   }
 );
 
