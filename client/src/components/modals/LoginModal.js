@@ -134,7 +134,7 @@ const LoginModal = (props) => {
                 case "office":
                   getDoctorName(data.token, data.user.id);
                   props.toggle();
-                  props.history.push("/office/");
+                  props.history.push("/office");
                   break;
                 default:
                   props.toggle();

@@ -1,5 +1,14 @@
 import React, { useEffect, useState, useContext } from "react";
-import { Container, Row, Col, Form, Button, Alert } from "react-bootstrap";
+import styled from "styled-components";
+import {
+  Container,
+  Row,
+  Col,
+  Form,
+  Button,
+  Alert,
+  Modal,
+} from "react-bootstrap";
 import UserContext from "../../../context/UserContext";
 import DataTable from "react-data-table-component";
 import { makeStyles } from "@material-ui/core/styles";
@@ -54,6 +63,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const CancelBtn = styled(Button)`
+font-size: 10px;
+border-top-left-radius: 5px;
+border-bottom-left-radius: 5px;
+border-top-right-radius: 5px;
+border-bottom-right-radius: 5px;
+      columns={columns}
+text-align: center;
+display: flex;
+align-items: center;
+justify-content: center;
+`;
+
 const LinearIndeterminate = () => {
   const classes = useStyles();
 
@@ -62,6 +84,15 @@ const LinearIndeterminate = () => {
       <LinearProgress />
     </div>
   );
+};
+
+const isToday = (schedDate, date) => {
+  const sDate = new Date(schedDate);
+  sDate.setHours(0, 0, 0, 0);
+  const dateNow = new Date(date);
+  dateNow.setHours(0, 0, 0, 0);
+  if (sDate.getTime() === dateNow.getTime()) return true;
+  else return false;
 };
 
 const dateSort = (a, b) => {
@@ -102,20 +133,6 @@ const columns = [
   {
     name: "Contact",
     selector: "contactNo",
-  },
-];
-
-const schedColumns = [
-  {
-    name: "Date & Time",
-    selector: "schedDateTime",
-    sortFunction: dateSort,
-    sortable: true,
-  },
-  {
-    name: "Doctor",
-    selector: "doctorName",
-    sortable: true,
   },
 ];
 
@@ -219,8 +236,47 @@ const Appointments = () => {
   const [unavailable, setUnavailable] = useState([]);
   const [alertContent, setAlertContent] = useState({
     show: false,
-    content: "",
   });
+  const [cancelModal, setCancelModal] = useState({
+    show: false,
+    sched_id: "",
+    doctor: "",
+    dateTime: "",
+  });
+
+  const schedColumns = [
+    {
+      name: "Date & Time",
+      selector: "schedDateTime",
+      sortFunction: dateSort,
+      sortable: true,
+    },
+    {
+      name: "Doctor",
+      selector: "doctorName",
+      sortable: true,
+    },
+    {
+      name: "Cancel",
+      button: true,
+      cell: (row) => (
+        <CancelBtn
+          disabled={isToday(row.schedDateTime, date) ? true : false}
+          className="btn-danger"
+          onClick={() => {
+            setCancelModal({
+              show: true,
+              sched_id: row._id,
+              doctor: row.doctorName,
+              dateTime: row.schedDateTime,
+            });
+          }}
+        >
+          X
+        </CancelBtn>
+      ),
+    },
+  ];
 
   const updateMap = (k, v) => {
     setDoctorMap(new Map(doctorMap.set(k, v)));
@@ -443,6 +499,44 @@ const Appointments = () => {
             });
             getSched();
           }
+          getSchedForDoctorOnDate();
+        });
+    } catch (error) {
+      setAlertContent({
+        show: true,
+        variant: "danger",
+        content: error,
+      });
+    }
+  };
+
+  const cancel = () => {
+    let token = localStorage.getItem("auth-token");
+    try {
+      fetch(`/api/patient/cancel/${cancelModal.sched_id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth-token": token,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.msgError) {
+            setAlertContent({
+              content: data.msg.body,
+              show: true,
+              variant: "danger",
+            });
+          } else {
+            setAlertContent({
+              content: `${data.msg.body}`,
+              show: true,
+              variant: "success",
+            });
+            getSched();
+          }
+          getSchedForDoctorOnDate();
         });
     } catch (error) {
       setAlertContent({
@@ -464,7 +558,7 @@ const Appointments = () => {
 
   return (
     <>
-      <Container className="p-5">
+      <Container className="pt-3">
         <Row>
           <div className="col">
             <DataTable
@@ -472,6 +566,7 @@ const Appointments = () => {
               title={
                 !isLoading ? "Upcoming Appointments" : "Loading Appointments"
               }
+              dense
               columns={schedColumns}
               data={upcomingList}
               pagination
@@ -480,7 +575,7 @@ const Appointments = () => {
               paginationRowsPerPageOptions={[10]}
             />
           </div>
-          <div className="col border border-primary rounded p-3">
+          <div className="col p-3">
             <h5>Make an Appointment</h5>
             <Form>
               <Form.Label>Doctor</Form.Label>
@@ -562,7 +657,7 @@ const Appointments = () => {
                   </div>
                   <div className="col-sm">
                     <DatePicker
-                      minDate={new Date(`${month} ${dateNum + 1},${year}`)}
+                      minDate={new Date(`${month} ${dateNum},${year}`)}
                       dateFormat="MMMM d, yyyy"
                       selected={selectedDate}
                       onChange={(date) => {
@@ -617,12 +712,43 @@ const Appointments = () => {
             columns={columns}
             data={doctorsList}
             pagination
+            paginationPerPage={15}
+            paginationRowsPerPageOptions={[15]}
             progressPending={isLoading}
             progressComponent={<LinearIndeterminate />}
             dense
           />
         </Row>
       </Container>
+
+      <Modal centered show={cancelModal.show} className="p-3" backdrop="static">
+        <Modal.Header>
+          <b>Appointment Cancellation</b>
+        </Modal.Header>
+        <Modal.Body>
+          Are you sure you want to cancel your appointment with{" "}
+          <b>Dr. {cancelModal.doctor}</b> on <b>{cancelModal.dateTime}</b>?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="secondary"
+            onClick={() => {
+              setCancelModal({ ...cancelModal, show: false });
+            }}
+          >
+            No
+          </Button>
+          <Button
+            onClick={() => {
+              setCancelModal({ ...cancelModal, show: false });
+              cancel();
+            }}
+          >
+            Yes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       {/* <Modal show={showModal} className="p-3" backdrop="static">
         <Modal.Body>
           <Form>

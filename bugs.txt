@@ -1,3 +1,1 @@
-medconnect bugs:
-
-set appointment can be set more than once 
+notification for cancellation of appointment for doctors/patient

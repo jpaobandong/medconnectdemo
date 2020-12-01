@@ -86,6 +86,23 @@ router.post(
   }
 );
 
+router.delete("/cancel/:id", auth_middleware.patient_auth, (req, res) => {
+  const { id } = req.params;
+
+  Schedule.findByIdAndDelete({ _id: id }, (err) => {
+    if (err)
+      return res.status(500).json({
+        msg: { body: "Server Error: " + err.message },
+        msgError: true,
+      });
+  });
+
+  return res.status(200).json({
+    msg: { body: "Appointment cancelled! " },
+    msgError: false,
+  });
+});
+
 router.get("/getSchedules", auth_middleware.patient_auth, (req, res) => {
   Schedule.find((err, list) => {
     if (err)
