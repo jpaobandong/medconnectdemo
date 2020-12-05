@@ -1,27 +1,41 @@
 import React, { useState, useContext } from "react";
-import { Navbar, Nav, Dropdown, DropdownButton } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import LogoutButton from "./LogoutBtn";
 import UserContext from "../../context/UserContext";
+import {
+  Nav,
+  Logo,
+  Hamburger,
+  Menu,
+  MenuLink,
+} from "../../StyledComps"; 
+import styled from "styled-components";
 
 const PatientNav = () => {
   const hist = useHistory();
   const { userName } = useContext(UserContext);
-  const [show, setShow] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
-  const onMenuClick = () => {
-    setShow(!show);
-  };
-
-  const hide = (e) => {
-    if (e && e.relatedTarget) {
-      e.relatedTarget.click();
-    }
-    setShow(false);
-  };
   return (
     <>
-      <Navbar bg="primary" expand="lg" variant="dark">
+      <Nav className="navbar navbar-expand-lg">
+        <Logo className="navbar-brand">
+          Med<span>Connect | {userName}</span>
+        </Logo>
+        <Hamburger onClick={() => setIsOpen(!isOpen)}>
+          <span />
+          <span />
+          <span />
+        </Hamburger>
+        <Menu isOpen={isOpen}>
+          <MenuLink to="/">Dashboard</MenuLink>
+          <MenuLink to="/patient/appointments">My Appointments</MenuLink>
+          <MenuLink to="/patient/records">My records</MenuLink>
+          <MenuLink to="/patient/profile">My Profile</MenuLink>
+          <LogoutButton history={hist} />
+        </Menu>
+      </Nav>
+      {/*  <Navbar bg="primary" expand="lg" variant="dark">
         <Navbar.Brand
           href="#"
           onClick={() => {
@@ -64,12 +78,33 @@ const PatientNav = () => {
               <Dropdown.Divider />
               <LogoutButton history={hist} />
             </DropdownButton>
-            {/*  */}
+            
           </Nav>
         </Navbar.Collapse>
-      </Navbar>
+      </Navbar> */}
     </>
   );
 };
 
 export default PatientNav;
+
+const DropdownDiv = styled.div``;
+
+const DropdownButton = styled.button`
+  padding: 1rem 2rem;
+  cursor: pointer;
+  text-align: center;
+  text-decoration: none;
+  font-size: 0.9rem;
+  color: #ffffff;
+  background-color: transparent;
+  border: 5px solid transparent;
+  &:hover {
+    text-decoration: none;
+    color: #073245;
+  }
+`;
+
+const DropdownMenu = styled.div``;
+
+const DropdownItem = styled.a``;

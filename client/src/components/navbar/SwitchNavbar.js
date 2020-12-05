@@ -1,4 +1,5 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
+import styled from "styled-components";
 import UserContext from "../../context/UserContext";
 import AdminNav from "./AdminNav";
 import GuestNav from "./GuestNav";
@@ -22,4 +23,5 @@ const SwitchNavBar = () => {
   }
   return <GuestNav />;
 };
+
 export default SwitchNavBar;

@@ -13,6 +13,11 @@ const ScheduleSchema = new mongoose.Schema({
     year: String,
   },
   timeslot: String,
+  hasRecord: {
+    type: Boolean,
+    default: false,
+    setDefaultsOnInsert: true,
+  },
   dateObj: Date,
   createdOn: {
     type: Date,

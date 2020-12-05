@@ -1,28 +1,35 @@
 import React, { useState, useContext } from "react";
-import { Navbar, Nav, Dropdown, DropdownButton } from "react-bootstrap";
-import { Link, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 import LogoutButton from "./LogoutBtn";
 import UserContext from "../../context/UserContext";
+import { Nav, Logo, Hamburger, Menu, MenuLink } from "../../StyledComps";
+import styled from "styled-components";
 
 const OfficeNav = () => {
   const hist = useHistory();
   const { userName } = useContext(UserContext);
-  const [show, setShow] = useState(false);
-
-  const onMenuClick = () => {
-    setShow(!show);
-  };
-
-  const hide = (e) => {
-    if (e && e.relatedTarget) {
-      e.relatedTarget.click();
-    }
-    setShow(false);
-  };
+  const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
-      <Navbar bg="primary" expand="lg" variant="dark">
+      <Nav className="navbar navbar-expand-lg">
+        <Logo className="navbar-brand">
+          Med<span>Connect | {userName}</span>
+        </Logo>
+        <Hamburger onClick={() => setIsOpen(!isOpen)}>
+          <span />
+          <span />
+          <span />
+        </Hamburger>
+        <Menu isOpen={isOpen}>
+          <MenuLink to="/">Dashboard</MenuLink>
+          <MenuLink to="/office/appointments">My Appointments</MenuLink>
+          <MenuLink to="/office/records">My Records</MenuLink>
+          <MenuLink to="/office/profile">My Profile</MenuLink>
+          <LogoutButton history={hist} />
+        </Menu>
+      </Nav>
+      {/* <Navbar bg="primary" expand="lg" variant="dark">
         <Link to="/office">
           <Navbar.Brand>MedConnect</Navbar.Brand>
         </Link>
@@ -63,7 +70,7 @@ const OfficeNav = () => {
             </DropdownButton>
           </Nav>
         </Navbar.Collapse>
-      </Navbar>
+      </Navbar> */}
     </>
   );
 };

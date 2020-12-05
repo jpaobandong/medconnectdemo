@@ -51,7 +51,7 @@ router.get(
     })
       .populate({
         path: "patient_id",
-        select: "firstName lastName email contactNo",
+        select: "_id firstName lastName email contactNo details medHist",
       })
       .exec((err, list) => {
         if (err)
@@ -189,5 +189,71 @@ router.put("/update/:id", auth_middleware.office_auth, (req, res) => {
     msgError: false,
   });
 });
+
+router.post("/createRecord", auth_middleware.office_auth, async (req, res) => {
+  const record = new Record(req.body);
+
+  record.save((err) => {
+    if (err)
+      return res.status(500).json({
+        msg: { body: "Server Error: " + err.message },
+        msgError: true,
+      });
+    else {
+      Schedule.findByIdAndUpdate(
+        record.schedule_id,
+        { hasRecord: true },
+        { returnOriginal: false },
+        (err) => {
+          if (err)
+            return res.status(500).json({
+              msg: { body: "Server Error: " + err.message },
+              msgError: true,
+            });
+
+          return res.status(200).json({
+            msg: { body: "Record Created!" },
+            msgError: false,
+          });
+        }
+      );
+    }
+  });
+});
+
+router.put("/updateRecord", auth_middleware.office_auth, (req, res) => {
+  const record = new Record(req.body);
+
+  Record.findOneAndUpdate({ _id: record._id }, record, (err) => {
+    if (err)
+      return res.status(500).json({
+        msg: { body: "Server Error: " + err.message },
+        msgError: true,
+      });
+    else
+      return res.status(200).json({
+        msg: { body: "Record Updated!" },
+        msgError: false,
+      });
+  });
+});
+
+router.get(
+  "/getRecord/:schedule_id",
+  auth_middleware.office_auth,
+  (req, res) => {
+    const { schedule_id } = req.params;
+
+    Record.findOne({ schedule_id }, (err, result) => {
+      if (err)
+        return res.status(500).json({
+          msg: { body: "Server Error: " + err.message },
+          msgError: true,
+        });
+
+      return res.status(200).json({ result });
+    });
+  }
+);
 
 module.exports = router;

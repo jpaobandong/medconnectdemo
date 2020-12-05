@@ -1,18 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
-import { Col, Container, Row } from "react-bootstrap";
 import UserContext from "../../../context/UserContext";
 import { useDate } from "../../hooks/useDate";
 import DataTable from "react-data-table-component";
 import { makeStyles } from "@material-ui/core/styles";
 import Alert from "@material-ui/lab/Alert";
-import {
-  IconButton,
-  Collapse,
-  Button,
-  LinearProgress,
-} from "@material-ui/core/";
+import { Snackbar, LinearProgress } from "@material-ui/core/";
 import CloseIcon from "@material-ui/icons/Close";
 import { Link } from "react-router-dom";
+import styled from "styled-components";
+import { Row, Column } from "../../../StyledComps";
+import HospitalBG from "../../../img/HospitalBG.jpg";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,6 +52,10 @@ const columns = [
   {
     name: "Doctor",
     selector: "doctorName",
+  },
+  {
+    name: "Specialization",
+    selector: "specialization",
   },
   {
     name: "Room",
@@ -102,9 +103,10 @@ const Dashboard = () => {
             data.list.map((e) => {
               const schedObj = {
                 doctorInfo: e.office_id,
+                specialization: e.office_id.specialization,
                 date: e.date,
                 timeslot: e.timeslot,
-                schedDateTime: `${e.date.month} ${e.date.day}, ${e.date.year} ${e.timeslot}`,
+                schedDateTime: `${e.date.month} ${e.date.day}, ${e.date.year} ${e.timeslot} `,
                 doctorName: `${e.office_id.lastName}, ${e.office_id.firstName}`,
                 office: `Rm. ${e.office_id.address.roomNumber} ${e.office_id.address.building}`,
                 clinicDays: `${e.office_id.clinicDays}`,
@@ -161,49 +163,50 @@ const Dashboard = () => {
 
   return (
     <>
-      <Container className="pt-2">
-        <div className="mb-2">
-          <Collapse in={open}>
-            <Alert
-              severity="warning"
-              action={
-                <IconButton
-                  aria-label="close"
-                  color="inherit"
-                  size="small"
-                  onClick={() => {
-                    setOpen(false);
-                  }}
-                >
-                  <CloseIcon fontSize="inherit" />
-                </IconButton>
-              }
-            >
-              In order for us to help you better, complete your profile{" "}
-              <b>
-                <Link to="/patient/profile">here</Link>
-              </b>
-              .
-            </Alert>
-          </Collapse>
-        </div>
-        <div className="p-2 mb-3 border border-info d-flex justify-content-between">
-          {`${wish} `}
-          {schedList.length === 0 ? (
-            <>You have no appointments today.</>
-          ) : (
-            `You have ${schedList.length} more appointment(s) today.`
-          )}
-          <b>{`${day} ${date} ${time}`}</b>
-        </div>
+      <Body>
+        <Snackbar
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+          open={open}
+          autoHideDuration={6000}
+          onClose={() => {
+            setOpen(false);
+          }}
+        >
+          <Alert
+            severity="warning"
+            onClose={() => {
+              setOpen(false);
+            }}
+            elevation={6}
+            variant="filled"
+          >
+            In order for us to help you better, complete your profile{" "}
+            <b>
+              <Link to="/patient/profile">here</Link>
+            </b>
+            .
+          </Alert>
+        </Snackbar>
 
-        <Row>
-          <Col>
+        <Row className="row">
+          <DateCol className="col">
+            <InnerContain>
+              <b>{`${day} ${date} ${time}`}</b>
+            </InnerContain>
+            <InnerContain>
+              {`${wish} `}
+              {schedList.length === 0 ? (
+                <>You have no appointments today.</>
+              ) : (
+                `You have ${schedList.length} more appointment(s) today.`
+              )}
+            </InnerContain>
+          </DateCol>
+          <div className="col">
             <DataTable
+              noDataComponent={<Empty />}
+              noHeader={true}
               defaultSortField="schedDateTime"
-              title={
-                isLoading ? "Loading Appointments..." : "Appointments Today"
-              }
               columns={columns}
               data={schedList}
               pagination // optionally, a hook to reset pagination to page 1
@@ -211,11 +214,39 @@ const Dashboard = () => {
               progressPending={isLoading}
               progressComponent={<LinearIndeterminate />}
             />
-          </Col>
+          </div>
         </Row>
-      </Container>
+      </Body>
     </>
   );
 };
 
 export default Dashboard;
+
+const Body = styled.div`
+  padding: 0.5rem;
+  height: 100%;
+`;
+
+const DateCol = styled.div`
+  max-width: 30%;
+  flex-direction: column;
+  justify-content: space-between;
+  border: #4886af solid 2px;
+  border-radius: 5px;
+`;
+
+const InnerContain = styled.div`
+  padding: 0.8rem 0.3rem;
+`;
+
+const Empty = () => {
+  return (
+    <InnerContain>
+      <p>
+        No appointments to display. Set one{" "}
+        {<Link to="/patient/appointments">here.</Link>}
+      </p>
+    </InnerContain>
+  );
+};

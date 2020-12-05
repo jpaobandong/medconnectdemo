@@ -6,6 +6,10 @@ import DataTable from "react-data-table-component";
 import { makeStyles } from "@material-ui/core/styles";
 import LinearProgress from "@material-ui/core/LinearProgress";
 import { useHistory } from "react-router-dom";
+import { Row, Column } from "../../../StyledComps";
+import RecordModal from "../../modals/RecordModal";
+import Snackbar from "@material-ui/core/Snackbar";
+import Alert from "@material-ui/lab/Alert";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -27,16 +31,15 @@ const LinearIndeterminate = () => {
 };
 
 const RecordBtn = styled(Button)`
-font-size: 10px;
-border-top-left-radius: 5px;
-border-bottom-left-radius: 5px;
-border-top-right-radius: 5px;
-border-bottom-right-radius: 5px;
-      columns={columns}
-text-align: center;
-display: flex;
-align-items: center;
-justify-content: center;
+  font-size: 11px;
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 const dateSort = (a, b) => {
@@ -56,6 +59,18 @@ const OfficeDashboard = () => {
   const { wish, day, date, time, month, dateNum, year } = useDate();
   const [schedList, setSchedList] = useState([]);
   const [isLoading, setisLoading] = useState(true);
+  const [show, setShow] = useState(false);
+  const [selectedSched, setSelectedSched] = useState(undefined);
+  const [snackbar, setSnackbar] = useState({
+    show: false,
+    variant: "error",
+    content: "",
+  });
+  const [prevRecord, setPrevRec] = useState({});
+
+  const toggle = () => {
+    setShow(!show);
+  };
 
   const columns = [
     {
@@ -69,17 +84,40 @@ const OfficeDashboard = () => {
       selector: "patientName",
     },
     {
+      name: "Contact no.",
+      selector: "patientInfo.contactNo",
+    },
+    {
       name: "Actions",
       button: true,
-      cell: (row) => (
-        <RecordBtn
-          onClick={() => {
-            history.push(`office/appointment/${row._id}`);
-          }}
-        >
-          View Record
-        </RecordBtn>
-      ),
+      cell: (row) => {
+        if (row.hasRecord) {
+          return (
+            <RecordBtn
+              onClick={() => {
+                setSelectedSched(row);
+                getRecord(row._id);
+                /* history.push(`office/appointment/${row._id}`); */
+              }}
+            >
+              View Record
+            </RecordBtn>
+          );
+        } else {
+          return (
+            <RecordBtn
+              className="btn-success"
+              onClick={() => {
+                setSelectedSched(row);
+                toggle();
+                /* history.push(`office/appointment/${row._id}`); */
+              }}
+            >
+              Create Record
+            </RecordBtn>
+          );
+        }
+      },
     },
   ];
 
@@ -106,6 +144,7 @@ const OfficeDashboard = () => {
                 timeslot: e.timeslot,
                 schedDateTime: `${e.date.month} ${e.date.day}, ${e.date.year} ${e.timeslot}`,
                 patientName: `${e.patient_id.lastName}, ${e.patient_id.firstName}`,
+                hasRecord: e.hasRecord ? true : false,
               };
               return setSchedList((oldList) => [...oldList, schedObj]);
             });
@@ -117,32 +156,113 @@ const OfficeDashboard = () => {
     }
   };
 
+  const getRecord = (sched_id) => {
+    let token = localStorage.getItem("auth-token");
+    try {
+      fetch(`/api/office/getRecord/${sched_id}`, {
+        method: "GET",
+        headers: {
+          "x-auth-token": token,
+        },
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.msgError) {
+            console.log(data.msg);
+          } else {
+            setPrevRec(data.result);
+          }
+          toggle();
+        });
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   useEffect(() => {
     getScheds();
   }, []);
 
   return (
-    <Container className="pt-3">
-      <div className="p-2 mb-3 border border-info d-flex justify-content-between">
-        {`${wish}`}
-        <b>{`${day} ${date} ${time}`}</b>
-      </div>
-      <DataTable
-        defaultSortField="schedDateTime"
-        title={
-          isLoading
-            ? "Loading Appointments..."
-            : "Appointments Today: " + schedList.length
-        }
-        columns={columns}
-        data={schedList}
-        pagination // optionally, a hook to reset pagination to page 1
-        persistTableHead
-        progressPending={isLoading}
-        progressComponent={<LinearIndeterminate />}
+    <Body>
+      <Row className="row">
+        <DateCol className="col">
+          <InnerContain>
+            <b>{`${day} ${date} ${time}`}</b>
+          </InnerContain>
+          <InnerContain>
+            {`${wish} `}
+            {schedList.length === 0 ? (
+              <>You have no appointments today.</>
+            ) : (
+              `You have ${schedList.length} more appointment(s) today.`
+            )}
+          </InnerContain>
+        </DateCol>
+        <div className="col">
+          <DataTable
+            noHeader={true}
+            defaultSortField="schedDateTime"
+            title={
+              isLoading
+                ? "Loading Appointments..."
+                : "Appointments Today: " + schedList.length
+            }
+            columns={columns}
+            data={schedList}
+            pagination // optionally, a hook to reset pagination to page 1
+            persistTableHead
+            progressPending={isLoading}
+            progressComponent={<LinearIndeterminate />}
+          />
+        </div>
+      </Row>
+      <RecordModal
+        show={show}
+        toggle={toggle}
+        schedInfo={selectedSched}
+        setSnackbar={setSnackbar}
+        getScheds={getScheds}
+        prevRecord={prevRecord}
       />
-    </Container>
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+        open={snackbar.show}
+        autoHideDuration={6000}
+        onClose={() => {
+          setSnackbar({ ...snackbar, show: false });
+        }}
+      >
+        <Alert
+          severity={snackbar.variant}
+          onClose={() => {
+            setSnackbar({ ...snackbar, show: false });
+          }}
+          elevation={6}
+          variant="filled"
+        >
+          {snackbar.content}
+        </Alert>
+      </Snackbar>
+    </Body>
   );
 };
 
 export default OfficeDashboard;
+
+const Body = styled.div`
+  padding: 0.5rem;
+  height: 100%;
+`;
+
+const DateCol = styled.div`
+  max-width: 30%;
+  flex-direction: column;
+  justify-content: space-between;
+  border: #4886af solid 2px;
+  border-radius: 5px;
+`;
+
+const InnerContain = styled.div`
+  padding: 0.8rem 0.3rem;
+`;

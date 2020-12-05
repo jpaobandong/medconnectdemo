@@ -1,1 +1,2 @@
 notification for cancellation of appointment for doctors/patient
+form check for records if inputs are valid (numerical for weight etc.)

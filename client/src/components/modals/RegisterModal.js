@@ -1,5 +1,7 @@
 import React, { useState } from "react";
-import { Modal, Button, Form, Alert, Col } from "react-bootstrap";
+import { Modal, Form, Alert, Col } from "react-bootstrap";
+import styled from "styled-components";
+import { PrimaryButton, SecondaryButton } from "../../StyledComps";
 
 const RegisterModal = (props) => {
   const [fields, setFields] = useState({
@@ -172,75 +174,70 @@ const RegisterModal = (props) => {
   return (
     <Modal show={props.show} backdrop="static">
       <Modal.Header>
-        <b>Patient Registration</b>
+        <CardTitle>Patient Registration</CardTitle>
       </Modal.Header>
       <Modal.Body>
         <Form>
           <Form.Row>
             <Col>
-              <Form.Group>
-                <Form.Label>First Name</Form.Label>
-                <Form.Control
+              <StyledGroup>
+                <StyledInput
                   type="text"
-                  placeholder="Juan"
+                  placeholder="First Name"
                   onChange={onChange}
                   value={fields.firstName}
                   name="firstName"
                 />
-              </Form.Group>
+              </StyledGroup>
             </Col>
             <Col>
-              <Form.Group>
-                <Form.Label>Last Name</Form.Label>
-                <Form.Control
+              <StyledGroup>
+                <StyledInput
                   type="text"
-                  placeholder="Dela Cruz"
+                  placeholder="Last Name"
                   onChange={onChange}
                   value={fields.lastName}
                   name="lastName"
                 />
-              </Form.Group>
+              </StyledGroup>
             </Col>
           </Form.Row>
 
           <Form.Row>
             <Col>
-              <Form.Group>
-                <Form.Label>Email address</Form.Label>
-                <Form.Control
+              <StyledGroup>
+                <StyledInput
                   type="email"
-                  placeholder="Enter email"
+                  placeholder="Email"
                   onChange={onChange}
                   value={fields.email}
                   name="email"
                 />
-              </Form.Group>
+              </StyledGroup>
             </Col>
           </Form.Row>
           <Form.Row>
             <Col>
-              <Form.Group>
-                <Form.Label>Password</Form.Label>
-                <Form.Control
+              <StyledGroup>
+                <StyledInput
                   type="password"
                   placeholder="Password"
                   onChange={onChange}
                   value={fields.password}
                   name="password"
                 />
-              </Form.Group>
+              </StyledGroup>
             </Col>
             <Col>
-              <Form.Group>
-                <Form.Label>Confirm Password</Form.Label>
-                <Form.Control
+              <StyledGroup>
+                <StyledInput
                   type="password"
                   placeholder="Confirm Password"
                   onChange={onChange}
                   value={fields.confirm}
                   name="confirm"
                 />
-              </Form.Group>
+              </StyledGroup>
             </Col>
           </Form.Row>
         </Form>
@@ -249,22 +246,39 @@ const RegisterModal = (props) => {
         </Alert>
       </Modal.Body>
       <Modal.Footer>
-        <Button
-          disabled={buttonDisabled}
-          variant="secondary"
-          onClick={onClickClose}
-        >
+        <SecondaryButton disabled={buttonDisabled} onClick={onClickClose}>
           Close
-        </Button>
-        <Button
-          disabled={buttonDisabled}
-          variant="primary"
-          onClick={onClickSubmit}
-        >
+        </SecondaryButton>
+        <PrimaryButton disabled={buttonDisabled} onClick={onClickSubmit}>
           {buttonContent}
-        </Button>
+        </PrimaryButton>
       </Modal.Footer>
     </Modal>
   );
 };
 export default RegisterModal;
+
+const StyledLabel = styled(Form.Label)`
+  color: #4886af;
+`;
+
+const StyledInput = styled(Form.Control)`
+  border: none;
+  border-bottom: 2px solid #83c1e8;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  &:focus {
+    outline: none;
+    border-bottom: 2px solid #4886af;
+  }
+`;
+
+const StyledGroup = styled(Form.Group)`
+  padding: 0.5rem;
+`;
+
+const CardTitle = styled.b`
+  color: #4886af;
+  font-size: 1.3rem;
+  font-weight: 400;
+`;
