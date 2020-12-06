@@ -7,6 +7,8 @@ const Office = require("../models/Office");
 const Admin = require("../models/Admin");
 const Verification = require("../models/Verification");
 const auth_middlware = require("../middleware/auth_middleware");
+const fs = require("fs");
+const handlebars = require("handlebars");
 require("dotenv").config();
 
 const generateVCode = () => {
@@ -28,6 +30,17 @@ const transporter = NodeMailer.createTransport({
     pass: process.env.EMAIL_PW,
   },
 });
+
+var readHTMLFile = function (path, callback) {
+  fs.readFile(path, { encoding: "utf-8" }, function (err, html) {
+    if (err) {
+      throw err;
+      callback(err);
+    } else {
+      callback(null, html);
+    }
+  });
+};
 
 router.post("/register", async (req, res) => {
   const { email, password, firstName, lastName } = req.body.fields;
@@ -113,7 +126,28 @@ router.post("/register", async (req, res) => {
         if (err) throw err;
       });
 
-      transporter.sendMail(
+      readHTMLFile(__dirname + "/emailverification.html", function (err, html) {
+        if (err) throw err;
+        var template = handlebars.compile(html);
+        var replacements = {
+          code: vCode,
+        };
+        var htmlToSend = template(replacements);
+        var mailOptions = {
+          from: '"MedConnect Admin" <medconnect.head@gmail.com>',
+          to: email,
+          subject: "MedConnect Account Verification",
+          html: htmlToSend,
+        };
+        transporter.sendMail(mailOptions, function (error, response) {
+          if (error) {
+            console.log(error);
+            callback(error);
+          }
+        });
+      });
+
+      /* transporter.sendMail(
         {
           from: '"MedConnect Admin" <medconnect.head@gmail.com>', // sender address
           to: email, // list of receivers
@@ -128,7 +162,7 @@ router.post("/register", async (req, res) => {
         (err) => {
           if (err) console.log(err);
         }
-      );
+      ); */
 
       return res.status(200).json({
         msg: {

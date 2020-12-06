@@ -4,6 +4,29 @@ const Patient = require("../models/Patient");
 const Schedule = require("../models/Schedule");
 const bcrypt = require("bcryptjs");
 const router = require("express").Router();
+const fs = require("fs");
+const handlebars = require("handlebars");
+const NodeMailer = require("nodemailer");
+
+const transporter = NodeMailer.createTransport({
+  service: "gmail",
+  host: "smtp.gmail.com",
+  auth: {
+    user: process.env.EMAIL,
+    pass: process.env.EMAIL_PW,
+  },
+});
+
+var readHTMLFile = function (path, callback) {
+  fs.readFile(path, { encoding: "utf-8" }, function (err, html) {
+    if (err) {
+      throw err;
+      callback(err);
+    } else {
+      callback(null, html);
+    }
+  });
+};
 
 router.get("/getDoctors", auth_middleware.patient_auth, (req, res) => {
   Office.find((err, list) => {
@@ -88,18 +111,70 @@ router.post(
 
 router.delete("/cancel/:id", auth_middleware.patient_auth, (req, res) => {
   const { id } = req.params;
+  const { reason } = req.body;
 
-  Schedule.findByIdAndDelete({ _id: id }, (err) => {
-    if (err)
-      return res.status(500).json({
-        msg: { body: "Server Error: " + err.message },
-        msgError: true,
+  Schedule.findByIdAndDelete({ _id: id }, async (err, result) => {
+    if (err) console.log(err);
+
+    const office = await Office.findOne({ _id: result.office_id }, (err) => {
+      if (err) console.log(err);
+    });
+
+    const patient = await Patient.findOne({ _id: result.patient_id }, (err) => {
+      if (err) console.log(err);
+    });
+
+    readHTMLFile(__dirname + "/emailcancel.html", function (err, html) {
+      if (err) throw err;
+      var template = handlebars.compile(html);
+      var replacements = {
+        user: `${patient.lastName}, ${patient.firstName}`,
+        date: `${result.date.month} ${result.date.day}, ${result.date.year}`,
+        reason: reason,
+      };
+      var htmlToSend = template(replacements);
+      var mailOptions = {
+        from: '"MedConnect Admin" <medconnect.head@gmail.com>',
+        to: office.email,
+        subject: "Appointment Cancellation",
+        html: htmlToSend,
+      };
+
+      transporter.sendMail(mailOptions, function (error, response) {
+        if (error) {
+          console.log(error);
+          callback(error);
+        }
       });
-  });
+    });
 
-  return res.status(200).json({
-    msg: { body: "Appointment cancelled! " },
-    msgError: false,
+    readHTMLFile(__dirname + "/emailcancel.html", function (err, html) {
+      if (err) throw err;
+      var template = handlebars.compile(html);
+      var replacements = {
+        user: `Dr. ${office.lastName}, ${office.firstName}`,
+        date: `${result.date.month} ${result.date.day}, ${result.date.year}`,
+        reason: reason,
+      };
+      var htmlToSend = template(replacements);
+      var mailOptions = {
+        from: '"MedConnect Admin" <medconnect.head@gmail.com>',
+        to: patient.email,
+        subject: "Appointment Cancellation",
+        html: htmlToSend,
+      };
+      transporter.sendMail(mailOptions, function (error, response) {
+        if (error) {
+          console.log(error);
+          callback(error);
+        }
+      });
+    });
+
+    return res.status(200).json({
+      msg: { body: "Appointment cancelled! " },
+      msgError: false,
+    });
   });
 });
 

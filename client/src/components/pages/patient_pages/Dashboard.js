@@ -244,7 +244,7 @@ const Empty = () => {
   return (
     <InnerContain>
       <p>
-        No appointments to display. Set one{" "}
+        No appointments for today. Set one{" "}
         {<Link to="/patient/appointments">here.</Link>}
       </p>
     </InnerContain>

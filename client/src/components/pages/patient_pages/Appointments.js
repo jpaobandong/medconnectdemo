@@ -16,6 +16,7 @@ import LinearProgress from "@material-ui/core/LinearProgress";
 import { useDate } from "../../hooks/useDate";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { CardTitle, StyledTextArea, StyledLabel } from "../../../StyledComps";
 
 const monthStrings = [
   "January",
@@ -220,7 +221,6 @@ const hasAppointmentForDay = (p_id, unavailArray) => {
 };
 
 const Appointments = () => {
-  const today = new Date();
   const { date, time, month, dateNum, year } = useDate();
   const { userData } = useContext(UserContext);
   const [doctorMap, setDoctorMap] = useState(new Map());
@@ -243,6 +243,11 @@ const Appointments = () => {
     doctor: "",
     dateTime: "",
   });
+  const [reason, setReason] = useState("");
+
+  const onReasonChange = (e) => {
+    setReason(e.target.value);
+  };
 
   const schedColumns = [
     {
@@ -511,6 +516,7 @@ const Appointments = () => {
   };
 
   const cancel = () => {
+    const data = { reason: reason };
     let token = localStorage.getItem("auth-token");
     try {
       fetch(`/api/patient/cancel/${cancelModal.sched_id}`, {
@@ -519,6 +525,7 @@ const Appointments = () => {
           "Content-Type": "application/json",
           "x-auth-token": token,
         },
+        body: JSON.stringify(data),
       })
         .then((response) => response.json())
         .then((data) => {
@@ -534,6 +541,7 @@ const Appointments = () => {
               show: true,
               variant: "success",
             });
+            setReason("");
             getSched();
           }
           getSchedForDoctorOnDate();
@@ -726,8 +734,20 @@ const Appointments = () => {
           <b>Appointment Cancellation</b>
         </Modal.Header>
         <Modal.Body>
-          Are you sure you want to cancel your appointment with{" "}
-          <b>Dr. {cancelModal.doctor}</b> on <b>{cancelModal.dateTime}</b>?
+          <StyledLabel>
+            Are you sure you want to cancel your appointment with{" "}
+            <b>Dr. {cancelModal.doctor}</b> on <b>{cancelModal.dateTime}</b>?
+          </StyledLabel>
+          <br />
+          <StyledLabel>Reason</StyledLabel>
+          <StyledTextArea
+            type="text"
+            placeholder="Indicating a reason for cancellation would help us improve our services."
+            onChange={onReasonChange}
+            value={reason}
+            row={3}
+            as="textarea"
+          />
         </Modal.Body>
         <Modal.Footer>
           <Button
@@ -744,104 +764,10 @@ const Appointments = () => {
               cancel();
             }}
           >
-            Yes
+            Confirm
           </Button>
         </Modal.Footer>
       </Modal>
-
-      {/* <Modal show={showModal} className="p-3" backdrop="static">
-        <Modal.Body>
-          <Form>
-            <Form.Label>Doctor</Form.Label>
-
-            <Form.Group as={Row}>
-              <Col>
-                <Form.Control
-                  as="select"
-                  value={selectedDoctor}
-                  onChange={(e) => {
-                    setSelectedDoctor(e.target.value);
-                  }}
-                >
-                  {loadDropdown()}
-                </Form.Control>
-              </Col>
-            </Form.Group>
-            <Form.Label>Time and Date</Form.Label>
-            <Form.Group as={Row}>
-              <Col>
-                <Form.Control
-                  as="select"
-                  value={timeSlot}
-                  onChange={onTSChange}
-                  name="timeSlot"
-                >
-                  {initTimeSlots()}
-                </Form.Control>
-              </Col>
-
-              <Col>
-                <Form.Control
-                  as="select"
-                  value={date.month}
-                  onChange={onDropdownChange}
-                  name="month"
-                >
-                  {months.map((e) => {
-                    return (
-                      <option key={e} value={e}>
-                        {e}
-                      </option>
-                    );
-                  })}
-                </Form.Control>
-              </Col>
-
-              <Col lg="2.5">
-                <Form.Control
-                  as="select"
-                  value={date.day}
-                  onChange={onDropdownChange}
-                  name="day"
-                >
-                  {initDays()}
-                </Form.Control>
-              </Col>
-
-              <Col lg="3">
-                <Form.Control
-                  as="select"
-                  value={date.year}
-                  onChange={onDropdownChange}
-                  name="year"
-                >
-                  <option value="2020">2020</option>
-                  <option value="2021">2021</option>
-                  <option value="2022">2022</option>
-                  <option value="2023">2023</option>
-                  <option value="2024">2024</option>
-                </Form.Control>
-              </Col>
-            </Form.Group>
-          </Form>
-          <Alert show={alertContent.show} variant={alertContent.variant}>
-            {alertContent.content}
-          </Alert>
-        </Modal.Body>
-
-        <Modal.Footer>
-          <Button disabled={disableBtn} variant="secondary" onClick={toggleMod}>
-            Close
-          </Button>
-          <Button
-            disabled={disableBtn}
-            variant="primary"
-            onClick={setAppointment}
-          >
-            Set Appointment
-          </Button>
-        </Modal.Footer>
-      </Modal> */}
     </>
   );
 };

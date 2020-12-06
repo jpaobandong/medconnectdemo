@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import { Link } from "react-router-dom";
+import { Form as BSForm } from "react-bootstrap";
 
 const Nav = styled.div`
   padding: 0 1rem;
@@ -108,6 +109,7 @@ const CardTitle = styled.h5`
 `;
 
 const LoginButton = styled.button`
+  width: 100%;
   background-color: #ffffff;
   border: none;
   color: #83c1e8;
@@ -202,7 +204,26 @@ const SecondaryButton = styled.button`
   }
 `;
 
+const StyledTextArea = styled(BSForm.Control)`
+  min-width: 100%;
+  resize: none;
+  border: 2px solid #83c1e8;
+  padding: 0.5rem;
+  font-size: 0.9rem;
+  &:focus {
+    outline: none;
+    border: 2px solid #4886af;
+  }
+`;
+
+const StyledLabel = styled(BSForm.Label)`
+  color: #4886af;
+  font-size: 0.9rem;
+`;
+
 export {
+  StyledTextArea,
+  StyledLabel,
   Text,
   Image,
   Input,
