@@ -1,9 +1,17 @@
 const mongoose = require("mongoose");
 
 const RecordSchema = new mongoose.Schema({
-  patient_id: { type: mongoose.ObjectId, requrired: true },
-  office_id: { type: mongoose.ObjectId, requrired: true },
-  schedule_id: { type: mongoose.ObjectId, requrired: true, unique: true },
+  patient_id: {
+    type: mongoose.Types.ObjectId,
+    ref: "patient",
+    requrired: true,
+  },
+  office_id: { type: mongoose.Types.ObjectId, ref: "office", requrired: true },
+  schedule_id: {
+    type: mongoose.Types.ObjectId,
+    ref: "schedule",
+    requrired: true,
+  },
   age: {
     type: String,
     required: true,

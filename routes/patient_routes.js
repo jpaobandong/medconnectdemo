@@ -7,6 +7,7 @@ const router = require("express").Router();
 const fs = require("fs");
 const handlebars = require("handlebars");
 const NodeMailer = require("nodemailer");
+const Record = require("../models/Record");
 
 const transporter = NodeMailer.createTransport({
   service: "gmail",
@@ -398,6 +399,38 @@ router.put(
       msg: { body: "Account updated!" },
       msgError: false,
     });
+  }
+);
+
+router.get(
+  "/getRecords/:patient_id",
+  auth_middleware.patient_auth,
+  (req, res) => {
+    const { patient_id } = req.params;
+
+    Record.find({ patient_id }, (err, list) => {
+      if (err)
+        return res.status(500).json({
+          msg: { body: "Server Error: " + err },
+          msgError: true,
+        });
+
+      return res.status(200).json({
+        msg: { body: list },
+        msgError: false,
+      });
+    })
+      .populate({
+        path: "office_id",
+        select: "-password",
+      })
+      .populate({
+        path: "patient_id",
+        select: "-password",
+      })
+      .populate({
+        path: "schedule_id",
+      });
   }
 );
 

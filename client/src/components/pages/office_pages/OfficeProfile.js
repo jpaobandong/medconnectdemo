@@ -340,7 +340,7 @@ const OfficeProfile = () => {
     setUser(undefined);
     try {
       let token = localStorage.getItem("auth-token");
-      fetch(`/api/office/${userData.user.id}`, {
+      fetch(`/api/office/getUser/${userData.user.id}`, {
         method: "GET",
         headers: {
           "x-auth-token": token,

@@ -2,13 +2,7 @@ import React, { useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import LogoutButton from "./LogoutBtn";
 import UserContext from "../../context/UserContext";
-import {
-  Nav,
-  Logo,
-  Hamburger,
-  Menu,
-  MenuLink,
-} from "../../StyledComps"; 
+import { Nav, Logo, Hamburger, Menu, MenuLink } from "../../StyledComps";
 import styled from "styled-components";
 
 const PatientNav = () => {
@@ -30,7 +24,7 @@ const PatientNav = () => {
         <Menu isOpen={isOpen}>
           <MenuLink to="/">Dashboard</MenuLink>
           <MenuLink to="/patient/appointments">My Appointments</MenuLink>
-          <MenuLink to="/patient/records">My records</MenuLink>
+          <MenuLink to="/patient/records">My Records</MenuLink>
           <MenuLink to="/patient/profile">My Profile</MenuLink>
           <LogoutButton history={hist} />
         </Menu>

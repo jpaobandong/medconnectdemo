@@ -18,6 +18,32 @@ router.get("/getPatients", auth_middleware.office_auth, (req, res) => {
   }).select("-password -role");
 });
 
+router.get("/getAllRecords", auth_middleware.office_auth, (req, res) => {
+  Record.find({}, (err, list) => {
+    if (err)
+      return res.status(500).json({
+        msg: { body: "Server Error: " + err },
+        msgError: true,
+      });
+
+    return res.status(200).json({
+      msg: { body: list },
+      msgError: false,
+    });
+  })
+    .populate({
+      path: "office_id",
+      select: "-password",
+    })
+    .populate({
+      path: "patient_id",
+      select: "-password",
+    })
+    .populate({
+      path: "schedule_id",
+    });
+});
+
 router.get("/getSchedules", auth_middleware.office_auth, (req, res) => {
   const user = req.user;
 
@@ -151,20 +177,6 @@ router.put("/changePass/:id", auth_middleware.office_auth, async (req, res) => {
   });
 });
 
-router.get("/:id", auth_middleware.office_auth, (req, res) => {
-  const _id = req.params.id;
-
-  Office.findById({ _id }, (err, user) => {
-    if (err)
-      return res.status(500).json({
-        msg: { body: "Server Error: " + err.message },
-        msgError: true,
-      });
-
-    return res.status(200).json({ user });
-  }).select("-password -role");
-});
-
 router.put("/update/:id", auth_middleware.office_auth, (req, res) => {
   const _id = req.params.id;
   const user = req.user;
@@ -255,5 +267,19 @@ router.get(
     });
   }
 );
+
+router.get("/getUser/:id", auth_middleware.office_auth, (req, res) => {
+  const _id = req.params.id;
+
+  Office.findById({ _id }, (err, user) => {
+    if (err)
+      return res.status(500).json({
+        msg: { body: "Server Error: " + err.message },
+        msgError: true,
+      });
+
+    return res.status(200).json({ user });
+  }).select("-password -role");
+});
 
 module.exports = router;
