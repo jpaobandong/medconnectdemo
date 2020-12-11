@@ -3,6 +3,7 @@ import { Container, Spinner, Row } from "react-bootstrap";
 import { BrowserRouter } from "react-router-dom";
 import SwitchNavBar from "./components/navbar/SwitchNavbar";
 import Home from "./components/pages/Home";
+import Contact from "./components/pages/Contact";
 import Appointments from "./components/pages/patient_pages/Appointments";
 import Records from "./components/pages/patient_pages/Records";
 import PatientProfile from "./components/pages/patient_pages/Profile";
@@ -139,6 +140,7 @@ function App() {
             <SwitchNavBar />
 
             <GuestRoute exact path="/" component={Home} />
+            <GuestRoute exact path="/contact" component={Contact} />
             <GuestRoute path="/verification" component={Verification} />
 
             <PatientRoute

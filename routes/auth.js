@@ -442,4 +442,40 @@ router.post("/mobilelogin", async (req, res) => {
   }
 });
 
+router.post("/sendMsg", (req, res) => {
+  const { name, email, subject, message } = req.body;
+
+  readHTMLFile(__dirname + "/emailcontact.html", function (err, html) {
+    if (err) throw err;
+    var template = handlebars.compile(html);
+    var replacements = {
+      name: name,
+      email: email,
+      subject: subject,
+      msg: message,
+    };
+    var htmlToSend = template(replacements);
+    var mailOptions = {
+      from: '"MedConnect Admin" <medconnect.head@gmail.com>',
+      to: "medconnect.head@gmail.com",
+      subject: "Contact Us Message",
+      html: htmlToSend,
+    };
+    transporter.sendMail(mailOptions, function (error, response) {
+      if (error) {
+        console.log(error);
+        callback(error);
+      }
+    });
+  });
+
+  return res.status(200).json({
+    msg: {
+      body:
+        "Message sent! Thank you for contacting us. We'll get back to you in a few days.",
+    },
+    msgError: false,
+  });
+});
+
 module.exports = router;

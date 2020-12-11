@@ -1,29 +1,33 @@
 import React, { useContext, useState } from "react";
-import { Navbar, Nav, DropdownButton, Dropdown } from "react-bootstrap";
 import { useHistory } from "react-router-dom";
 import UserContext from "../../context/UserContext";
 import LogoutButton from "./LogoutBtn";
+import { Nav, Logo, Hamburger, Menu, MenuLink } from "../../StyledComps";
 
 const AdminNav = () => {
-  const { userName } = useContext(UserContext);
   const hist = useHistory();
-
+  const [isOpen, setIsOpen] = useState(false);
   const [show, setShow] = useState(false);
-
-  const onMenuClick = () => {
-    setShow(!show);
-  };
-
-  const hide = (e) => {
-    if (e && e.relatedTarget) {
-      e.relatedTarget.click();
-    }
-    setShow(false);
-  };
 
   return (
     <>
-      <Navbar bg="primary" expand="lg" variant="dark">
+      <Nav className="navbar navbar-expand-lg">
+        <Logo className="navbar-brand">
+          Med<span>Connect | Admin</span>
+        </Logo>
+        <Hamburger onClick={() => setIsOpen(!isOpen)}>
+          <span />
+          <span />
+          <span />
+        </Hamburger>
+        <Menu isOpen={isOpen}>
+          <MenuLink to="/admin">Dashboard</MenuLink>
+          <MenuLink to="/admin/accounts">Patient Accounts</MenuLink>
+          <MenuLink to="/admin/offices">Doctor Accounts</MenuLink>
+          <LogoutButton history={hist} />
+        </Menu>
+      </Nav>
+      {/* <Navbar bg="primary" expand="lg" variant="dark">
         <Navbar.Brand
           href="#"
           onClick={() => {
@@ -57,13 +61,13 @@ const AdminNav = () => {
               title={userName}
               id="dropdown-menu-align-right"
             >
-              {/* <Dropdown.Item>My Account</Dropdown.Item> */}
+              
               <Dropdown.Divider />
               <LogoutButton history={hist} />
             </DropdownButton>
           </Nav>
         </Navbar.Collapse>
-      </Navbar>
+      </Navbar> */}
     </>
   );
 };

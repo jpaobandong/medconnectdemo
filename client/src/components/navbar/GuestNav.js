@@ -17,7 +17,7 @@ const GuestNav = () => {
   return (
     <>
       <Nav className="navbar navbar-expand-lg">
-        <Logo class="navbar-brand">
+        <Logo className="navbar-brand">
           Med<span>Connect</span>
         </Logo>
         <Hamburger onClick={() => setIsOpen(!isOpen)}>
@@ -28,7 +28,7 @@ const GuestNav = () => {
         <Menu isOpen={isOpen}>
           <MenuLink to="/">Home</MenuLink>
           <MenuLink>About</MenuLink>
-          <MenuLink>Contact</MenuLink>
+          <MenuLink to="/contact">Contact</MenuLink>
           <MenuLink to="/verification">Verify</MenuLink>
         </Menu>
       </Nav>
