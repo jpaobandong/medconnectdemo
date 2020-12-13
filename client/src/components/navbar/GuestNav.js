@@ -27,7 +27,6 @@ const GuestNav = () => {
         </Hamburger>
         <Menu isOpen={isOpen}>
           <MenuLink to="/">Home</MenuLink>
-          <MenuLink>About</MenuLink>
           <MenuLink to="/contact">Contact</MenuLink>
           <MenuLink to="/verification">Verify</MenuLink>
         </Menu>

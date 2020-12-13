@@ -18,6 +18,7 @@ import {
 } from "../../StyledComps";
 import RegisterModal from "../modals/RegisterModal";
 import { useHistory } from "react-router-dom";
+import Footer from "../Footer";
 
 const Home = () => {
   const hist = useHistory();
@@ -273,6 +274,7 @@ const Home = () => {
           {alert.content}
         </Alert>
       </Snackbar>
+      <Footer />
     </>
   );
 };

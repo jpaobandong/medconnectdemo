@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { Col, Row, Form } from "react-bootstrap";
 import styled from "styled-components";
 import { LoginButton } from "../../StyledComps";
+import Footer from "../Footer";
 
 const Contact = () => {
   const [details, setDetails] = useState({
@@ -84,66 +85,73 @@ const Contact = () => {
   };
 
   return (
-    <Container>
-      <Row>
-        <Image src="https://i.ibb.co/s31416m/contactus.jpg" alt="contactus" />
+    <>
+      <Container>
+        <Row>
+          <Image src="https://i.ibb.co/s31416m/contactus.jpg" alt="contactus" />
 
-        <Col>
-          <FormContainer>
-            <Title>We would like to hear from you! </Title>
-            <Input
-              placeholder="Name"
-              name="name"
-              value={details.name}
-              onChange={onChange}
-            />
-            <Input
-              placeholder="Email"
-              type="email"
-              name="email"
-              value={details.email}
-              onChange={onChange}
-            />
-            <Input
-              placeholder="Subject"
-              name="subject"
-              value={details.subject}
-              onChange={onChange}
-            />
-            <StyledTextAreaLarge
-              value={details.message}
-              onChange={onChange}
-              name="message"
-              row={3}
-              as="textarea"
-              type="text"
-              placeholder="Message"
-            />
-            <Row className="justify-content-end">
-              <Button
-                disabled={disabled}
-                onClick={() => {
-                  sendMsg();
-                }}
-              >
-                Send
-              </Button>
-            </Row>
-          </FormContainer>
-        </Col>
-      </Row>
+          <Col>
+            <FormContainer>
+              <Title>We would like to hear from you! </Title>
+              <Input
+                placeholder="Name"
+                name="name"
+                value={details.name}
+                onChange={onChange}
+              />
+              <Input
+                placeholder="Email"
+                type="email"
+                name="email"
+                value={details.email}
+                onChange={onChange}
+              />
+              <Input
+                placeholder="Subject"
+                name="subject"
+                value={details.subject}
+                onChange={onChange}
+              />
+              <StyledTextAreaLarge
+                value={details.message}
+                onChange={onChange}
+                name="message"
+                row={3}
+                as="textarea"
+                type="text"
+                placeholder="Message"
+              />
+              <Row className="justify-content-end">
+                <Button
+                  disabled={disabled}
+                  onClick={() => {
+                    sendMsg();
+                  }}
+                >
+                  Send
+                </Button>
+              </Row>
+            </FormContainer>
+          </Col>
+        </Row>
 
-      <Snackbar open={alert.show} autoHideDuration={6000} onClose={handleClose}>
-        <Alert
-          severity={alert.variant}
+        <Snackbar
+          open={alert.show}
+          autoHideDuration={6000}
           onClose={handleClose}
-          elevation={6}
-          variant="filled"
         >
-          {alert.content}
-        </Alert>
-      </Snackbar>
-    </Container>
+          <Alert
+            severity={alert.variant}
+            onClose={handleClose}
+            elevation={6}
+            variant="filled"
+          >
+            {alert.content}
+          </Alert>
+        </Snackbar>
+      </Container>
+      <Footer />
+    </>
   );
 };
 

@@ -22,6 +22,7 @@ import AdminDash from "./components/pages/admin_pages/AdminDashboard";
 import OfficeDashboard from "./components/pages/office_pages/OfficeDashboard";
 import OfficeProfile from "./components/pages/office_pages/OfficeProfile";
 import PatientRecord from "./components/pages/office_pages/PatientRecord";
+import Footer from "./components/Footer";
 
 function App() {
   const [userData, setUserData] = useState({
@@ -167,6 +168,7 @@ function App() {
             />
             <OfficeRoute exact path="/office/" component={OfficeDashboard} />
           </UserContext.Provider>
+          {/* <Footer /> */}
         </BrowserRouter>
       </div>
     );
