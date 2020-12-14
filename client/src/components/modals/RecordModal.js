@@ -1,9 +1,11 @@
 import { Snackbar } from "@material-ui/core";
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState, useRef } from "react";
 import { Modal, Form, Alert, Col, Row } from "react-bootstrap";
 import styled from "styled-components";
 import UserContext from "../../context/UserContext";
-import { PrimaryButton, SecondaryButton } from "../../StyledComps";
+import { PrimaryButton, SecondaryButton, PrintButton } from "../../StyledComps";
+import PrintIcon from "@material-ui/icons/Print";
+import { useReactToPrint } from "react-to-print";
 
 function getAge(dateString) {
   var today = new Date();
@@ -34,6 +36,11 @@ const RecordModal = (props) => {
   const [record, setRecord] = useState(initState);
   const [isEditing, setIsEditing] = useState(true);
   const [isSending, setIsSending] = useState(false);
+
+  const componentRef = useRef();
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+  });
 
   const onChange = (e) => {
     setRecord({ ...record, [e.target.name]: e.target.value });
@@ -198,7 +205,7 @@ const RecordModal = (props) => {
               : `Create Record`}
           </CardTitle>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body ref={componentRef}>
           <Container className="row">
             <div className="col">
               <StyledLabel>
@@ -463,6 +470,16 @@ const RecordModal = (props) => {
           </Alert>
         </Modal.Body>
         <Modal.Footer>
+          {schedInfo === undefined ? (
+            ""
+          ) : schedInfo.hasRecord ? (
+            <PrintButton>
+              <PrintIcon onClick={handlePrint} />
+              Print
+            </PrintButton>
+          ) : (
+            ""
+          )}
           <SecondaryButton disabled={isSending} onClick={toggle}>
             Cancel
           </SecondaryButton>

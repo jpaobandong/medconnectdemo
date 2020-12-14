@@ -188,6 +188,23 @@ const PrimaryButton = styled.button`
   }
 `;
 
+const PrintButton = styled.button`
+  background-color: #6e9a44;
+  border: none;
+  color: #fff;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 15px;
+  padding: 0.5rem 1.5rem;
+  border-radius: 8px;
+  outline: none;
+  &:hover {
+    background-color: #bad072;
+    color: #000;
+  }
+`;
+
 const SecondaryButton = styled.button`
   background-color: #424246;
   border: none;
@@ -244,4 +261,5 @@ export {
   MenuLink,
   PrimaryButton,
   SecondaryButton,
+  PrintButton
 };
