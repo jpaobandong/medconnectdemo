@@ -274,11 +274,13 @@ const Home = () => {
           {alert.content}
         </Alert>
       </Snackbar>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };
 
 export default Home;
 
-const StyledContainer = styled.div``;
+const StyledContainer = styled.div`
+  min-height: 100vh;
+`;

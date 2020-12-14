@@ -13,6 +13,7 @@ import { Edit, Save, Clear, Update, Warning } from "@material-ui/icons";
 import { Alert as MuiAlert } from "@material-ui/lab";
 import { useHistory } from "react-router-dom";
 import UserContext from "../../../context/UserContext";
+import styled from "styled-components";
 
 const PatientProfile = () => {
   let currentDate = new Date();
@@ -429,7 +430,7 @@ const PatientProfile = () => {
   }, []);
 
   return (
-    <div className="row">
+    <StyledContainer className="row">
       <div className="col-2 border-right border-info" id="sticky-sidebar">
         <div className="sticky-top ">
           <ul className="nav flex-column mt-2">
@@ -1003,8 +1004,12 @@ const PatientProfile = () => {
           </Dialog>
         </Container>
       </div>
-    </div>
+    </StyledContainer>
   );
 };
 
 export default PatientProfile;
+
+const StyledContainer = styled.div`
+  min-height: 100vh;
+`;

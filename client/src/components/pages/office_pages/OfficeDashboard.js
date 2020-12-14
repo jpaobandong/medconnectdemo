@@ -252,7 +252,7 @@ export default OfficeDashboard;
 
 const Body = styled.div`
   padding: 0.5rem;
-  height: 100%;
+  min-height: 100vh;
 `;
 
 const DateCol = styled.div`

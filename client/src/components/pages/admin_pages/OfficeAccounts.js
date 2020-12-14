@@ -32,7 +32,7 @@ const ClearButton = styled(Button)`
   border-bottom-left-radius: 0;
   border-top-right-radius: 5px;
   border-bottom-right-radius: 5px;
-        columns={columns}
+  /* columns={columns} */
   height: 34px;
   width: 32px;
   text-align: center;
@@ -177,7 +177,7 @@ const OfficeAccounts = () => {
 
   return (
     <>
-      <Container className="p-5">
+      <StyledContainer className="p-5">
         <Row className="justify-content-between"></Row>
         <Row>
           <DataTable
@@ -194,7 +194,7 @@ const OfficeAccounts = () => {
             progressComponent={<LinearIndeterminate />}
           />
         </Row>
-      </Container>
+      </StyledContainer>
 
       <NewOfficeModal
         snackOpen={handleClose}
@@ -217,3 +217,7 @@ const OfficeAccounts = () => {
   );
 };
 export default OfficeAccounts;
+
+const StyledContainer = styled(Container)`
+  min-height: 100vh;
+`;

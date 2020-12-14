@@ -27,7 +27,7 @@ const LinearIndeterminate = () => {
   );
 };
 
-const RecordBtn = styled(Button)`
+/* const RecordBtn = styled(Button)`
 font-size: 10px;
 border-top-left-radius: 5px;
 border-bottom-left-radius: 5px;
@@ -38,7 +38,7 @@ text-align: center;
 display: flex;
 align-items: center;
 justify-content: center;
-`;
+`; */
 
 const dateSort = (a, b) => {
   let aDate = new Date(
@@ -131,7 +131,7 @@ const OfficeAppointments = () => {
     getScheds();
   }, []);
   return (
-    <Container className="p-5">
+    <StyledContainer>
       <DataTable
         defaultSortField="schedDateTime"
         title={isLoading ? "Loading Appointments..." : "Upcoming Appointments"}
@@ -142,8 +142,13 @@ const OfficeAppointments = () => {
         progressPending={isLoading}
         progressComponent={<LinearIndeterminate />}
       />
-    </Container>
+    </StyledContainer>
   );
 };
 
 export default OfficeAppointments;
+
+const StyledContainer = styled.div`
+  padding: 2rem;
+  min-height: 100vh;
+`;

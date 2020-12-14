@@ -566,7 +566,7 @@ const Appointments = () => {
 
   return (
     <>
-      <Container className="pt-3">
+      <StyledContainer className="pt-3">
         <Row>
           <div className="col">
             <DataTable
@@ -727,7 +727,7 @@ const Appointments = () => {
             dense
           />
         </Row>
-      </Container>
+      </StyledContainer>
 
       <Modal centered show={cancelModal.show} className="p-3" backdrop="static">
         <Modal.Header>
@@ -773,3 +773,7 @@ const Appointments = () => {
 };
 
 export default Appointments;
+
+const StyledContainer = styled(Container)`
+  min-height: 100vh;
+`;

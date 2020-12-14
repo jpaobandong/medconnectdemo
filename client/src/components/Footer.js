@@ -3,12 +3,12 @@ import styled from "styled-components";
 
 const Footer = () => {
   return (
-    <FooterContainer class="site-footer">
-      <div class="container">
-        <div class="row">
-          <div class="col-sm-12 col-md-8">
+    <FooterContainer className="site-footer">
+      <div className="container">
+        <div className="row">
+          <div className="col-sm-12 col-md-8">
             <h6>About</h6>
-            <p class="text-justify">
+            <p className="text-justify">
               MedConnect is a web based medical records system that provides
               access and connection between medical practitioners and potential
               users. The developers aim to fill in the gaps of paper based
@@ -20,7 +20,7 @@ const Footer = () => {
             </p>
           </div>
 
-          <div /* class="col-xs-6 col-md-3" */>
+          <div /* className="col-xs-6 col-md-3" */>
             <h6>Reach Us</h6>
             <p>
               Email: <b>medconnect.head@gmail.com</b> <br />
@@ -29,9 +29,9 @@ const Footer = () => {
           </div>
 
           {/*
-          <div class="col-xs-6 col-md-3">
+          <div className="col-xs-6 col-md-3">
             <h6>Quick Links</h6>
-            <ul class="footer-links">
+            <ul className="footer-links">
               <li>
                 <a href="http://scanfcode.com/about/">About Us</a>
               </li>
@@ -56,33 +56,33 @@ const Footer = () => {
         </div>
         <hr />
       </div>
-      <div class="container">
-        <div class="row">
-          <div class="col-md-8 col-sm-6 col-xs-12">
-            <p class="copyright-text">
+      <div className="container">
+        <div className="row">
+          <div className="col-md-8 col-sm-6 col-xs-12">
+            <p className="copyright-text">
               Copyright &copy; 2020 All Rights Reserved by MedConnect.
             </p>
           </div>
-          {/* <div class="col-md-4 col-sm-6 col-xs-12">
-            <ul class="social-icons">
+          {/* <div className="col-md-4 col-sm-6 col-xs-12">
+            <ul className="social-icons">
               <li>
-                <a class="facebook" href="#">
-                  <i class="fa fa-facebook"></i>
+                <a className="facebook" href="#">
+                  <i className="fa fa-facebook"></i>
                 </a>
               </li>
               <li>
-                <a class="twitter" href="#">
-                  <i class="fa fa-twitter"></i>
+                <a className="twitter" href="#">
+                  <i className="fa fa-twitter"></i>
                 </a>
               </li>
               <li>
-                <a class="dribbble" href="#">
-                  <i class="fa fa-dribbble"></i>
+                <a className="dribbble" href="#">
+                  <i className="fa fa-dribbble"></i>
                 </a>
               </li>
               <li>
-                <a class="linkedin" href="#">
-                  <i class="fa fa-linkedin"></i>
+                <a className="linkedin" href="#">
+                  <i className="fa fa-linkedin"></i>
                 </a>
               </li>
             </ul>

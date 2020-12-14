@@ -150,7 +150,7 @@ const Contact = () => {
           </Alert>
         </Snackbar>
       </Container>
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };
@@ -159,6 +159,7 @@ export default Contact;
 
 const Container = styled.div`
   padding: 2rem 1rem;
+  height: 100vh;
 `;
 
 const Image = styled.img`

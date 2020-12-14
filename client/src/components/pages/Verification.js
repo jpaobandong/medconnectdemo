@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Container, Form, Button, Row, Col, Alert } from "react-bootstrap";
+import styled from "styled-components";
 
 const Verification = () => {
   const [credentials, setUserCredentials] = useState({
@@ -73,7 +74,7 @@ const Verification = () => {
   };
 
   return (
-    <Container className="p-5" fluid="sm">
+    <StyledContainer className="p-5" fluid="sm">
       <Row className="justify-content-center">
         <Col lg={4} md={6} sm={8}>
           <h3>Verify account</h3>
@@ -108,8 +109,12 @@ const Verification = () => {
           </Form>
         </Col>
       </Row>
-    </Container>
+    </StyledContainer>
   );
 };
 
 export default Verification;
+
+const StyledContainer = styled(Container)`
+  height: 100vh;
+`;

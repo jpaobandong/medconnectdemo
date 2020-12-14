@@ -5,6 +5,7 @@ import { Edit, Save, Clear, Update, Warning } from "@material-ui/icons";
 import { Alert as MuiAlert } from "@material-ui/lab";
 import UserContext from "../../../context/UserContext";
 import { useDate } from "../../hooks/useDate";
+import styled from "styled-components";
 
 const CBGroupComponent = ({ accntFormStat, clinicDays, CBhandleChange }) => {
   return (
@@ -403,7 +404,7 @@ const OfficeProfile = () => {
   }, []);
 
   return (
-    <Container className="p-3 mt-2">
+    <StyledContainer className="p-3 mt-2">
       <Form>
         <div className="col m-2">
           <div className="row align-bottom">
@@ -706,8 +707,12 @@ const OfficeProfile = () => {
           {snack.content}
         </MuiAlert>
       </Snackbar>
-    </Container>
+    </StyledContainer>
   );
 };
 
 export default OfficeProfile;
+
+const StyledContainer = styled(Container)`
+  min-height: 100vh;
+`;

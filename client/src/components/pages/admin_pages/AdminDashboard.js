@@ -4,6 +4,7 @@ import { useDate } from "../../hooks/useDate";
 import DataTable from "react-data-table-component";
 import { makeStyles } from "@material-ui/core/styles";
 import LinearProgress from "@material-ui/core/LinearProgress";
+import styled from "styled-components";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -99,7 +100,7 @@ const AdminDash = () => {
   }, []);
 
   return (
-    <Container className="pt-3">
+    <StyledContainer className="pt-3">
       <div className="p-2 mb-3 border border-info d-flex justify-content-between">
         {`${wish}`}
         <b>{`${day} ${date} ${time}`}</b>
@@ -118,8 +119,12 @@ const AdminDash = () => {
         progressPending={isLoading}
         progressComponent={<LinearIndeterminate />}
       />
-    </Container>
+    </StyledContainer>
   );
 };
 
 export default AdminDash;
+
+const StyledContainer = styled(Container)`
+  min-height: 100vh;
+`;

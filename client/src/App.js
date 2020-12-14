@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Spinner, Row } from "react-bootstrap";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import SwitchNavBar from "./components/navbar/SwitchNavbar";
 import Home from "./components/pages/Home";
 import Contact from "./components/pages/Contact";
@@ -23,6 +23,7 @@ import OfficeDashboard from "./components/pages/office_pages/OfficeDashboard";
 import OfficeProfile from "./components/pages/office_pages/OfficeProfile";
 import PatientRecord from "./components/pages/office_pages/PatientRecord";
 import Footer from "./components/Footer";
+import Unauthorized from "./components/pages/Unauthorized";
 
 function App() {
   const [userData, setUserData] = useState({
@@ -139,36 +140,61 @@ function App() {
             }}
           >
             <SwitchNavBar />
+            <Switch>
+              <GuestRoute exact path="/" component={Home} />
+              <GuestRoute exact path="/contact" component={Contact} />
+              <GuestRoute path="/verification" component={Verification} />
 
-            <GuestRoute exact path="/" component={Home} />
-            <GuestRoute exact path="/contact" component={Contact} />
-            <GuestRoute path="/verification" component={Verification} />
+              <PatientRoute
+                exact
+                path="/patient/appointments"
+                component={Appointments}
+              />
+              <PatientRoute exact path="/patient/records" component={Records} />
+              <PatientRoute
+                exact
+                path="/patient/profile"
+                component={PatientProfile}
+              />
+              <PatientRoute exact path="/patient/" component={Dashboard} />
 
-            <PatientRoute
-              path="/patient/appointments"
-              component={Appointments}
-            />
-            <PatientRoute path="/patient/records" component={Records} />
-            <PatientRoute path="/patient/profile" component={PatientProfile} />
-            <PatientRoute exact path="/patient/" component={Dashboard} />
+              <AdminRoute
+                exact
+                path="/admin/accounts"
+                component={PatientAccounts}
+              />
+              <AdminRoute
+                exact
+                path="/admin/offices"
+                component={OfficeAccounts}
+              />
+              <AdminRoute exact path="/admin/" component={AdminDash} />
 
-            <AdminRoute path="/admin/accounts" component={PatientAccounts} />
-            <AdminRoute path="/admin/offices" component={OfficeAccounts} />
-            <AdminRoute exact path="/admin/" component={AdminDash} />
-
-            <OfficeRoute
-              path="/office/appointments"
-              component={OfficeAppointments}
-            />
-            <OfficeRoute path="/office/records" component={OfficeRecords} />
-            <OfficeRoute path="/office/profile" component={OfficeProfile} />
-            <OfficeRoute
-              path="/office/appointment/:id"
-              component={PatientRecord}
-            />
-            <OfficeRoute exact path="/office/" component={OfficeDashboard} />
+              <OfficeRoute
+                exact
+                path="/office/appointments"
+                component={OfficeAppointments}
+              />
+              <OfficeRoute
+                exact
+                path="/office/records"
+                component={OfficeRecords}
+              />
+              <OfficeRoute
+                exact
+                path="/office/profile"
+                component={OfficeProfile}
+              />
+              <OfficeRoute
+                exact
+                path="/office/appointment/:id"
+                component={PatientRecord}
+              />
+              <OfficeRoute exact path="/office/" component={OfficeDashboard} />
+              <Route path="*" component={Unauthorized} />
+            </Switch>
           </UserContext.Provider>
-          {/* <Footer /> */}
+          <Footer />
         </BrowserRouter>
       </div>
     );

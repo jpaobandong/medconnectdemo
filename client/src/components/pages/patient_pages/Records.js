@@ -119,4 +119,5 @@ const StyledContainer = styled(Container)`
   margin: 0;
   padding: 1.5rem;
   justify-content: center;
+  min-height: 100vh;
 `;
