@@ -114,6 +114,8 @@ router.delete("/cancel/:id", auth_middleware.patient_auth, (req, res) => {
   const { id } = req.params;
   if (req.body != null) {
     const { reason } = req.body;
+  } else {
+    const reason = "";
   }
 
   Schedule.findByIdAndDelete({ _id: id }, async (err, result) => {
