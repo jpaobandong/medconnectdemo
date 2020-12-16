@@ -61,11 +61,6 @@ const columns = [
     name: "Room",
     selector: "office",
   },
-
-  {
-    name: "Clinic Hours",
-    selector: "clinicHours",
-  },
 ];
 
 const isUpcoming = (schedDate, date, time) => {
@@ -190,15 +185,15 @@ const Dashboard = () => {
 
         <Row className="row">
           <DateCol className="col">
-            <InnerContain>
+            <InnerContain className="row">
               <b>{`${day} ${date} ${time}`}</b>
             </InnerContain>
-            <InnerContain>
+            <InnerContain className="row">
               {`${wish} `}
               {schedList.length === 0 ? (
                 <>You have no appointments today.</>
               ) : (
-                `You have ${schedList.length} more appointment(s) today.`
+                `Appointments today: ${schedList.length}`
               )}
             </InnerContain>
           </DateCol>
@@ -229,7 +224,8 @@ const Body = styled.div`
 `;
 
 const DateCol = styled.div`
-  max-width: 30%;
+  /* padding: 0rem 0.8rem; */
+  max-width: 400px;
   flex-direction: column;
   justify-content: space-between;
   border: #4886af solid 2px;
@@ -238,6 +234,7 @@ const DateCol = styled.div`
 
 const InnerContain = styled.div`
   padding: 0.8rem 0.3rem;
+  margin: 0rem 0.3rem;
 `;
 
 const Empty = () => {

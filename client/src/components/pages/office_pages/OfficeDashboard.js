@@ -256,7 +256,7 @@ const Body = styled.div`
 `;
 
 const DateCol = styled.div`
-  max-width: 30%;
+  max-width: 400px;
   flex-direction: column;
   justify-content: space-between;
   border: #4886af solid 2px;
@@ -265,4 +265,5 @@ const DateCol = styled.div`
 
 const InnerContain = styled.div`
   padding: 0.8rem 0.3rem;
+  margin: 0rem 0.3rem;
 `;

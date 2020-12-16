@@ -1,0 +1,11 @@
+home page-
+login card: babaan
+navigation: align with login card
+
+verification:
+redirect to login
+use not just letters
+
+appointment notifications
+
+about to home page
