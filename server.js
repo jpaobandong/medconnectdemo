@@ -3,12 +3,14 @@ const express = require("express");
 const mongoose = require("mongoose");
 const api = require("./routes/api");
 const path = require("path");
+const cors = require("cors");
 require("dotenv").config();
 /* const { createDoctors, createPatients } = require("./dummyscript"); */
 
 //#initialize express framework-------express handles most of the process we'll be running
 const app = express();
 
+app.use(cors());
 //#use express json parser
 app.use(express.json());
 
