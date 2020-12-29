@@ -100,7 +100,7 @@ PatientSchema.pre("save", function (next) {
   });
 });
 
-PatientSchema.pre("remove", function (next) {
+PatientSchema.pre("findOneAndDelete", function (next) {
   Schedule.remove({ patient_id: this._id }).exec();
   Record.remove({ patient_id: this._id }).exec();
   next();
