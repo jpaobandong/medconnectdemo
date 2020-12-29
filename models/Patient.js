@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const Schedule = require("./Schedule");
+const Record = require("./Record");
 
 const PatientSchema = new mongoose.Schema({
   email: {
@@ -101,6 +102,7 @@ PatientSchema.pre("save", function (next) {
 
 PatientSchema.pre("remove", function (next) {
   Schedule.remove({ patient_id: this._id }).exec();
+  Record.remove({ patient_id: this._id }).exec();
   next();
 });
 
