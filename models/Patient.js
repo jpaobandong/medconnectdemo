@@ -100,11 +100,15 @@ PatientSchema.pre("save", function (next) {
   });
 });
 
-PatientSchema.pre("findOneAndDelete", function (next) {
-  Schedule.remove({ patient_id: this._id }).exec();
-  Record.remove({ patient_id: this._id }).exec();
-  next();
-});
+PatientSchema.pre(
+  "findOneAndDelete",
+  { document: true, query: false },
+  function (next) {
+    Schedule.remove({ patient_id: this._id }).exec();
+    Record.remove({ patient_id: this._id }).exec();
+    next();
+  }
+);
 
 PatientSchema.methods.comparePassword = function (password) {
   return bcrypt.compare(password, this.password);
