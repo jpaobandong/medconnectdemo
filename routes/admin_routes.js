@@ -235,4 +235,21 @@ router.get("/getSchedules/:month-:day-:year", (req, res) => {
     });
 });
 
+router.delete("/deleteAccount/:id", auth_middleware.admin_auth, (req, res) => {
+  const { id } = req.params;
+
+  Office.findByIdAndDelete({ _id: id }, (err) => {
+    if (err)
+      return res.status(500).json({
+        msg: { body: "Server Error: " + err },
+        msgError: true,
+      });
+  });
+
+  return res.status(200).json({
+    msg: { body: "Account deactivated!" },
+    msgError: false,
+  });
+});
+
 module.exports = router;
