@@ -22,6 +22,7 @@ const ScheduleSchema = new mongoose.Schema({
   createdOn: {
     type: Date,
   },
+  queueNumber: Number,
 });
 
 module.exports = Schedule = mongoose.model("schedule", ScheduleSchema);
