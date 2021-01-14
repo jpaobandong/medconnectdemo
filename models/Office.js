@@ -27,6 +27,7 @@ const OfficeSchema = new mongoose.Schema({
     type: String,
     default: "",
   },
+  maxPatients: { type: Number, default: 0 },
   clinicDays: {
     type: [String],
     default: [],

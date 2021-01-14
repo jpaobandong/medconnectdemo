@@ -42,6 +42,7 @@ router.post("/registerOffice", auth_middleware.admin_auth, async (req, res) => {
     building,
     specialization,
     contactNo,
+    maxPatients,
   } = req.body.fields;
   const { hours, days } = req.body;
   const pass = generatePass();
@@ -127,6 +128,7 @@ router.post("/registerOffice", auth_middleware.admin_auth, async (req, res) => {
       contactNo,
       clinicHours: hours,
       clinicDays: days,
+      maxPatients: maxPatients,
     });
 
     newOffice.save((err) => {
