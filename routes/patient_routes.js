@@ -59,7 +59,7 @@ router.post(
   "/setAppointment",
   auth_middleware.patient_auth,
   async (req, res) => {
-    const { office_id, req_date, req_timeslot } = req.body;
+    const { office_id, req_date, req_timeslot, queueNumber } = req.body;
     const user = req.user;
 
     if (!office_id) {
@@ -95,6 +95,7 @@ router.post(
       timeslot: req_timeslot,
       dateObj: `${req_date.month}-${req_date.day}-${req_date.year}`,
       createdOn: new Date(),
+      queueNumber: queueNumber,
     });
     newSched.save((err) => {
       if (err)
